@@ -14,7 +14,7 @@
 			<key>comment</key>
 			<string>if else highlights all in the parenthesis as well</string>
 			<key>match</key>
-			<string>^((if)|(}\s*)?(else))(\s\(.*\))</string>
+			<string>(?=\s*)(if|else)</string>
 			<key>name</key>
 			<string>keyword.control.flow.lp</string>
 		</dict>

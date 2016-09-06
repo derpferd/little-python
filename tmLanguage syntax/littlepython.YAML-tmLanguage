@@ -7,7 +7,7 @@ uuid: ca03e751-04ef-4330-9a6b-9b99aae1c418
 patterns:
 - comment: if else highlights all in the parenthesis as well
   name: keyword.control.flow.lp
-  match: ^((if)|(}\s*)?(else))(\s\(.*\))
+  match: (?=\s*)(if|else)
 
 - comment: Arithmetic Operators
   name: keyword.operator.lp
