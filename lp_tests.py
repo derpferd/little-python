@@ -136,6 +136,39 @@ class TestLPComplierMethods(unittest.TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_line_comment(self):
+        beginning_state = {}
+        code = """a=3\n# This is a comment\nb=4"""
+        expected_state = {"a": 3, "b": 4}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_inline_comment_with_spaces(self):
+        beginning_state = {}
+        code = """a=3 # This is a comment\nb=4"""
+        expected_state = {"a": 3, "b": 4}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_inline_comment_without_space(self):
+        beginning_state = {}
+        code = """a=3#This is a comment\nb=4"""
+        expected_state = {"a": 3, "b": 4}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)

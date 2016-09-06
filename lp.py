@@ -89,7 +89,7 @@ class TokenStreamer(object):
 
     @staticmethod
     def tokenize(line):
-        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%]|[A-Za-z_][A-Za-z0-9_]*|\d+', line))
+        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%#]|[A-Za-z_][A-Za-z0-9_]*|\d+', line))
         return list(token_iter)
 
     def has_nxt_line(self):
@@ -173,6 +173,8 @@ class Compiler(object):
                 operators_stack.pop()
             elif token.isdigit():
                 operands_stack.append({"op": "int", "a": int(token)})
+            elif token and token[0] == "#":
+                token_pos = len(tokens)
             else:
                 # At this point it should only be a variable.
                 # TODO: check if the variable is valid or not.
@@ -198,7 +200,7 @@ class Compiler(object):
         while tk_stream.has_nxt_line():
             tokens = list(tk_stream.nxt_tokens())
 
-            if not len(tokens):
+            if not len(tokens) or "#" == tokens[0][0]:
                 continue
 
             if tokens[0] == '}':
