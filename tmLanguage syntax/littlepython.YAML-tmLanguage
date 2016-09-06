@@ -1,0 +1,30 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+name: Little Python
+scopeName: source.lp
+fileTypes: [lp]
+uuid: ca03e751-04ef-4330-9a6b-9b99aae1c418
+
+patterns:
+- comment: if else highlights all in the parenthesis as well
+  name: keyword.control.flow.lp
+  match: ^((if)|(}\s*)?(else))(\s\(.*\))
+
+- comment: Arithmetic Operators
+  name: keyword.operator.lp
+  match: \+\-/\*\%
+
+- comment: Comparison Operators
+  name: keyword.operator.comparison.lp
+  match: (?=\s*)(==|is)(?=\s*\w+)
+
+- comment: Logical Operators
+  name: keyword.operator.logical.lp
+  match: (?=\s*)(and|or|not)(?=\s*\w+)
+
+- comment: Variables
+  name: keyword.source.lp
+  match: ([\_a-zA-Z][a-zA-Z0-9]*)(?=\s\=)
+
+- comment: Comment
+  name: comment.line.number-sign.lp
+  match: \#.*$

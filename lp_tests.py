@@ -125,6 +125,82 @@ class TestLPComplierMethods(unittest.TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_if_with_not(self):
+        beginning_state = {}
+        code = """if 0 is not 1 {
+            c = 3
+        }"""
+        expected_state = {"c": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_if_with_var(self):
+        beginning_state = {}
+        code = """
+        c = 3
+        if c is 3 {
+            d = 4
+        }"""
+        expected_state = {"c": 3, "d":4}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_if_with_var_reassignment(self):
+        beginning_state = {}
+        code = """
+        c = 3
+        if c is 3 {
+            c = 5
+        }"""
+        expected_state = {"c": 5}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_nested_if(self):
+            beginning_state = {}
+            code = """if 0 is 0 {
+                if 1 is 1 {
+                    c = 3
+                }
+            }"""
+            expected_state = {"c": 3}
+
+            # compile code into LPProg
+            prog = self.compiler.compile(code.split("\n"))
+
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+    
+    def test_nested_if_with_var_reassignment(self):
+        beginning_state = {}
+        code = """
+        c = 3
+        if c is 3 {
+            c = 4
+            if c is 4 {
+                c = 5
+            }
+        }"""
+        expected_state = {"c": 5}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
     def test_long_alphanumeric_variable_name(self):
         beginning_state = {}
         code = """asdfasdfasdfasdifgasdfhga232hjkbljh123b1jh2b31j2hb = 23"""

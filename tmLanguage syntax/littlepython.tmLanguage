@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>lp</string>
+	</array>
+	<key>name</key>
+	<string>Little Python</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>comment</key>
+			<string>if else highlights all in the parenthesis as well</string>
+			<key>match</key>
+			<string>^((if)|(}\s*)?(else))(\s\(.*\))</string>
+			<key>name</key>
+			<string>keyword.control.flow.lp</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Arithmetic Operators</string>
+			<key>match</key>
+			<string>\+\-/\*\%</string>
+			<key>name</key>
+			<string>keyword.operator.lp</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Comparison Operators</string>
+			<key>match</key>
+			<string>(?=\s*)(==|is)(?=\s*\w+)</string>
+			<key>name</key>
+			<string>keyword.operator.comparison.lp</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Logical Operators</string>
+			<key>match</key>
+			<string>(?=\s*)(and|or|not)(?=\s*\w+)</string>
+			<key>name</key>
+			<string>keyword.operator.logical.lp</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Variables</string>
+			<key>match</key>
+			<string>([\_a-zA-Z][a-zA-Z0-9]*)(?=\s\=)</string>
+			<key>name</key>
+			<string>keyword.source.lp</string>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>Comment</string>
+			<key>match</key>
+			<string>\#.*$</string>
+			<key>name</key>
+			<string>comment.line.number-sign.lp</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.lp</string>
+	<key>uuid</key>
+	<string>ca03e751-04ef-4330-9a6b-9b99aae1c418</string>
+</dict>
+</plist>

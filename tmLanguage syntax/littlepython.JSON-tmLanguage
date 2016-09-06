@@ -1,0 +1,38 @@
+{   
+        "name": "Little Python",
+        "scopeName": "source.lp",
+        "fileTypes": ["lp"],
+        "patterns": [
+            {
+                "match" : "^((if)|(})?(else))$",
+                "name" : "keyword.control.flow.lp",
+                "comment" : "if else"
+            },
+            {
+                "match" : "\\+\\-\/\\*\\%",
+                "name" : "keyword.operator.lp",
+                "comment" : "Arithmetic Operators"
+            },
+            {
+                "match" : "(==)|(is)",
+                "name" : "keyword.operator.comparison.lp",
+                "comment" : "Comparison Operators"
+            },
+            {
+                "match" : "(?i)(not)|(or)|(and)",
+                "name" : "keyword.operator.logical.lp",
+                "comment" : "Logical Operators"
+            },
+            {
+                "match" : "\\$([A-Za-z][A-Za-z0-9_]+)",
+                "name" : "keyword.source.lp",
+                "comment" : "Variables"
+            },
+            {
+                "match" : "\\#.*$",
+                "name" : "comment.line.number-sign.lp",
+                "comment" : "Comment"
+            }
+        ],
+        "uuid": "ca03e751-04ef-4330-9a6b-9b99aae1c418"
+}
