@@ -102,6 +102,8 @@ class TokenStreamer(object):
         return line
 
     def peek_nxt_tokens(self):
+        if not self.has_nxt_line():
+            return []
         tks = self.nxt_tokens()
         self.cur_line -= 1
         return tks
