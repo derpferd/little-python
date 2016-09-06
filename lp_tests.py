@@ -68,6 +68,28 @@ class TestLPComplierMethods(unittest.TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_variable_with_underscore(self):
+        beginning_state = {}
+        code = """a_b = 2"""
+        expected_state = {"a_b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_variable_with_underscore_at_beginning(self):
+        beginning_state = {}
+        code = """_b = 2"""
+        expected_state = {"_b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
     def test_variable_assignment_to_simple_expression(self):
         beginning_state = {}
         code = """b = 40 % 1"""

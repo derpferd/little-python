@@ -89,7 +89,7 @@ class TokenStreamer(object):
 
     @staticmethod
     def tokenize(line):
-        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%]|[A-Za-z][A-Za-z0-9]*|\d+', line))
+        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%]|[A-Za-z_][A-Za-z0-9_]*|\d+', line))
         return list(token_iter)
 
     def has_nxt_line(self):
@@ -120,7 +120,7 @@ class Compiler(object):
 
     def __init__(self):
         self.controls = ["if"]
-        self.var_ptrn = re.compile(r'^[a-zA-Z][a-zA-Z0-9]*$')
+        self.var_ptrn = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
 
     @staticmethod
     def build_last_tree(operands, operators):
