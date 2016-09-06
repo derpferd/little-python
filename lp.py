@@ -89,7 +89,7 @@ class TokenStreamer(object):
 
     @staticmethod
     def tokenize(line):
-        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%]|[A-Za-z]+|\d+', line))
+        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%]|[A-Za-z][A-Za-z0-9]+|\d+', line))
         return list(token_iter)
 
     def has_nxt_line(self):
