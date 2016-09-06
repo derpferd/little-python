@@ -89,7 +89,7 @@ class TokenStreamer(object):
 
     @staticmethod
     def tokenize(line):
-        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%]|[A-Za-z][A-Za-z0-9]+|\d+', line))
+        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%]|[A-Za-z][A-Za-z0-9]*|\d+', line))
         return list(token_iter)
 
     def has_nxt_line(self):
@@ -98,7 +98,6 @@ class TokenStreamer(object):
     def nxt_line(self):
         line = self.lines[self.cur_line]
         self.cur_line += 1
-        # print (line)
         return line
 
     def peek_nxt_tokens(self):
@@ -182,7 +181,6 @@ class Compiler(object):
         while operators_stack:
             operands_stack.append(self.build_last_tree(operands_stack, operators_stack))
         return operands_stack[0]
-        # TODO: don't forget to finish up the stack
 
     # This pass is the simply parse the program into an AST
     def pass1(self, lines):
