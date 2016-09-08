@@ -7,8 +7,12 @@ import sys
 from copy import deepcopy as copy
 
 
-class Var(str):
-    pass
+class Var(object):
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
 
 
 class LPProg(object):
@@ -29,6 +33,8 @@ class LPProg(object):
 
     @staticmethod
     def eval_expression(expression, state):
+        if isinstance(expression, Var):
+            return state[str(expression)]
         # print ("B:",expression)
         for operand in ["a", "b"]:
             if operand in expression and isinstance(expression[operand], Var):

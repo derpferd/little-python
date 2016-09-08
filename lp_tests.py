@@ -245,6 +245,17 @@ class TestLPComplierMethods(unittest.TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_beginning_state(self):
+        beginning_state = {"b": 2}
+        code = """a=b"""
+        expected_state = {"a": 2, "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)
