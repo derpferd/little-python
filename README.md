@@ -1,5 +1,6 @@
 # Little Python
 *A Super Simplified Python with a Little Syntactic Sugar*
+*MIT License*
 
 
 ### Statement of Purpose
