@@ -256,6 +256,25 @@ class TestLPComplierMethods(unittest.TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_multiple_ifs(self):
+        beginning_state = {"a": 2}
+        code = """if a is 1 {
+        b = 2
+        }
+        if a is 2 {
+        b = 3
+        }
+        if a is 3 {
+        b = 4
+        }"""
+        expected_state = {"a": 2, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)

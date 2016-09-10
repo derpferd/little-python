@@ -38,7 +38,7 @@ class LPProg(object):
         # print ("B:",expression)
         for operand in ["a", "b"]:
             if operand in expression and isinstance(expression[operand], Var):
-                expression[operand] = state[expression[operand]]
+                expression[operand] = state[str(expression[operand])]
             elif operand in expression and isinstance(expression[operand], dict):
                 expression[operand] = LPProg.eval_expression(expression[operand], state)
         # print ("A:",expression)
@@ -200,6 +200,7 @@ class Compiler(object):
         tk_stream = TokenStreamer(lines)
         program = []
         levels = []
+        level_stms = []
         level_ctrls = []
         state = self.NONE
         line = None
@@ -212,17 +213,26 @@ class Compiler(object):
             if tokens[0] == '}':
                 assert len(levels) >= 1
                 ctrl = level_ctrls.pop()
-                stms = levels.pop()
+                stms = level_stms.pop()
+                level = levels.pop()
 
-                levels[-1][-1][ctrl] = stms
+                level[ctrl] = stms
+
+                # if "op" in levels[-1][-1] and levels[-1][-1]["op"] in self.controls:
+                #     levels[-1][-1][ctrl] = stms
+                # else:
+                #     levels[-1] += stms
 
                 if ctrl == "if" and ("else" in tokens or "else" in tk_stream.peek_nxt_tokens()):
                     # we need to continue
                     level_ctrls.append("else")
-                    levels.append([])
-                elif len(levels) == 1:
-                    program += [levels[0][0]]
+                    levels.append(level)
+                    level_ctrls.append([])
+                elif len(levels) == 0:
+                    program += [level]
                     state = self.NONE
+                else:
+                    level_stms[-1].append(level)
             elif tokens[0] in self.controls: # or first_token == "else":
                 # parse for control
                 statement = {}
@@ -230,8 +240,8 @@ class Compiler(object):
                 statement["ctrl"] = self.parse_exp(tokens[1:-1])  # -1 to remove to '{' at the end
 
                 level_ctrls.append(statement["op"])
-                levels.append([statement])
-                levels.append([])
+                levels.append(statement)
+                level_stms.append([])
                 state = self.IF
             else:
                 statement = {}
@@ -243,7 +253,7 @@ class Compiler(object):
                 statement["op"] = "="
                 statement["exp"] = self.parse_exp(tokens[2:])
                 if state == self.IF:
-                    levels[-1] += [statement]
+                    level_stms[-1] += [statement]
                 else:
                     program += [statement]
 
