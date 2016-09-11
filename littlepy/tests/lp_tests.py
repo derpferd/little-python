@@ -1,11 +1,12 @@
 # Copyright (C) Jonathan Beaulieu (beau0307@d.umn.edu)
 # Copyright (C) Aleksandar Straumann (alstraumann@gmail.com)
 
-import unittest
-from lp import Compiler
+from unittest import TestCase
+
+from littlepy.lp import Compiler
 
 
-class TestLPComplierMethods(unittest.TestCase):
+class TestLPComplierMethods(TestCase):
     def setUp(self):
         self.compiler = Compiler()
 
@@ -276,6 +277,6 @@ class TestLPComplierMethods(unittest.TestCase):
         self.assertEqual(expected_state, ending_state)
 
 
-if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+# if __name__ == '__main__':
+#     suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)
+#     unittest.TextTestRunner(verbosity=2).run(suite)
