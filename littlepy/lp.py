@@ -35,17 +35,18 @@ class LPProg(object):
     def eval_expression(expression, state):
         if isinstance(expression, Var):
             return state[str(expression)]
+        operands = {"a": expression.get("a"), "b": expression.get("b")}
         # print ("B:",expression)
         for operand in ["a", "b"]:
             if operand in expression and isinstance(expression[operand], Var):
-                expression[operand] = state[str(expression[operand])]
+                operands[operand] = state[str(expression[operand])]
             elif operand in expression and isinstance(expression[operand], dict):
-                expression[operand] = LPProg.eval_expression(expression[operand], state)
+                operands[operand] = LPProg.eval_expression(expression[operand], state)
         # print ("A:",expression)
         if expression["op"] in LPProg.uniaryOps:
-            return LPProg.uniaryOps[expression["op"]](expression["a"])
+            return LPProg.uniaryOps[expression["op"]](operands["a"])
         elif expression["op"] in LPProg.binaryOps:
-            return LPProg.binaryOps[expression["op"]](expression["a"],expression["b"])
+            return LPProg.binaryOps[expression["op"]](operands["a"], operands["b"])
         raise Exception("Unknown op")
 
     @staticmethod
