@@ -3,10 +3,16 @@
 
 *MIT License*
 
-
 ### Statement of Purpose
 
 > The intent of the Little Python programming language is to implement a simple language that is easy for people with little to no coding experience to create a program. The need for such a language arose when creating a framework for competitions  where individuals of all skill levels can create a rudimentary AI to compete against various challenges. We wanted to “level” the playing field by having a language that is limited in functionality, creating an even playing field. Please keep this in mind when suggesting and/or commenting on the design features.
+
+###Setup
+1. Setup.py
+2. Run "python setup.py test" to install depences for tests and run them
+3. Run "pip install ." to install package locally
+4. Run "pip install . -e" to install locally and make sym links to make any update to the files in the package accessable on the local system
+
 
 ### Design Thoughts
 > Data Types
@@ -102,3 +108,7 @@ Execute Abstract Syntax Tree with arguments.
  {'op': 'if', 'ctrl': a, 'if': b, 'else': c}// if a is true do b else do c (the else if optional)
  {'op': '=', 'var': a, 'exp': b}  // set variable a to b
  ~~~
+ 
+### Todo
+Add better metadata to setup.py
+
