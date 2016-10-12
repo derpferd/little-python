@@ -4,6 +4,7 @@ from __future__ import print_function
 import os
 import re
 import sys
+import random
 from copy import deepcopy as copy
 
 
@@ -32,14 +33,22 @@ class LPProg(object):
         self.program_ASTs = program_ASTs
 
     @staticmethod
+    def resolve_var(var, state):
+        if str(var) not in state:
+            if str(var) == "rand":
+                return random.randint(-2147483647, 2147483647)
+        else:
+            return state[str(var)]
+
+    @staticmethod
     def eval_expression(expression, state):
         if isinstance(expression, Var):
-            return state[str(expression)]
+            return LPProg.resolve_var(expression, state)
         operands = {"a": expression.get("a"), "b": expression.get("b")}
         # print ("B:",expression)
         for operand in ["a", "b"]:
             if operand in expression and isinstance(expression[operand], Var):
-                operands[operand] = state[str(expression[operand])]
+                operands[operand] = LPProg.resolve_var(expression[operand], state)
             elif operand in expression and isinstance(expression[operand], dict):
                 operands[operand] = LPProg.eval_expression(expression[operand], state)
         # print ("A:",expression)
