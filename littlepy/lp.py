@@ -37,6 +37,8 @@ class LPProg(object):
         if str(var) not in state:
             if str(var) == "rand":
                 return random.randint(-2147483647, 2147483647)
+            else:
+                return 0
         else:
             return state[str(var)]
 
