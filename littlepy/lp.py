@@ -237,7 +237,7 @@ class Compiler(object):
                     # we need to continue
                     level_ctrls.append("else")
                     levels.append(level)
-                    level_ctrls.append([])
+                    level_stms.append([])
                 elif len(levels) == 0:
                     program += [level]
                     state = self.NONE

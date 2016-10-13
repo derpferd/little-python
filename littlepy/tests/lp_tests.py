@@ -276,7 +276,23 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_if_else(self):
+        beginning_state = {"a": 2}
+        code = """if a is 1 {
+        b = 2
+        } else {
+        b = 3
+        }"""
+        expected_state = {"a": 2, "b": 3}
 
-# if __name__ == '__main__':
-#     suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)
-#     unittest.TextTestRunner(verbosity=2).run(suite)
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+
+if __name__ == '__main__':
+    import unittest
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)
+    unittest.TextTestRunner(verbosity=2).run(suite)
