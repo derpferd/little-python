@@ -1,6 +1,9 @@
 # Copyright (C) Jonathan Beaulieu (beau0307@d.umn.edu)
 
+from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 import os
 import re
 import sys
@@ -15,18 +18,22 @@ class Var(object):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return "<LP Var: '" + self.name + "'>"
+
 
 class LPProg(object):
     binaryOps = {"+": lambda a, b: a + b,
                  "-": lambda a, b: a - b,
                  "*": lambda a, b: a * b,
-                 "/": lambda a, b: a / b,
+                 # This might become a problem in future versions this works for integers only
+                 "/": lambda a, b: a // b,
                  "%": lambda a, b: a % b,
                  "or": lambda a, b: a or b,
                  "and": lambda a, b: a and b,
                  "is": lambda a, b: a is b,
                  "is not": lambda a, b: a is not b}
-    uniaryOps = {"not": lambda a: not a,
+    unaryOps = {"not": lambda a: not a,
                  "int": lambda a: int(a)}
 
     def __init__(self, program_ASTs):
@@ -54,8 +61,8 @@ class LPProg(object):
             elif operand in expression and isinstance(expression[operand], dict):
                 operands[operand] = LPProg.eval_expression(expression[operand], state)
         # print ("A:",expression)
-        if expression["op"] in LPProg.uniaryOps:
-            return LPProg.uniaryOps[expression["op"]](operands["a"])
+        if expression["op"] in LPProg.unaryOps:
+            return LPProg.unaryOps[expression["op"]](operands["a"])
         elif expression["op"] in LPProg.binaryOps:
             return LPProg.binaryOps[expression["op"]](operands["a"], operands["b"])
         raise Exception("Unknown op")
@@ -76,7 +83,7 @@ class LPProg(object):
 
     # static_vars are varibles that the program will be able to access and change
     # the return value is the varibles at the end of the program
-    # both take the form of a dictionary with the varible name as the key and the value as the value
+    # both take the form of a dictionary with the variable name as the key and the value as the value
     def run(self, static_vars={}):
         state = copy(static_vars)
         for ast in self.program_ASTs:
@@ -134,7 +141,7 @@ class Compiler(object):
     IF = 1
 
     binaryOps = ["+", "-", "*", "/", "%", "or", "and", "is", "is not"]
-    uniaryOps = ["not"]
+    unaryOps = ["not"]
 
     def __init__(self):
         self.controls = ["if"]
@@ -153,6 +160,8 @@ class Compiler(object):
 
     @staticmethod
     def get_op_priority(op):
+        if op in ('(', ')'):
+            return 0
         if op in ('and', 'or'):
             return 1
         if op in ('not'):
@@ -178,9 +187,10 @@ class Compiler(object):
                 while operators_stack and self.get_op_priority(operators_stack[-1]) >= self.get_op_priority(token):
                     operands_stack.append(self.build_last_tree(operands_stack, operators_stack))
                 operators_stack.append(token)
-            elif token in self.uniaryOps:
-                operands_stack.append({"op": token, "a": tokens[token_pos + 1]})
-                token_pos += 1
+            elif token in self.unaryOps:
+                while operators_stack and self.get_op_priority(operators_stack[-1]) >= self.get_op_priority(token):
+                    operands_stack.append(self.build_last_tree(operands_stack, operators_stack))
+                operators_stack.append(token)
             elif token == '(':
                 operators_stack.append(token)
             elif token == ')':

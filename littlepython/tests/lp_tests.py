@@ -3,12 +3,13 @@
 
 from unittest import TestCase
 
-from littlepy.lp import Compiler
+from littlepython.lp import Compiler
 
 
 class TestLPComplierMethods(TestCase):
     def setUp(self):
         self.compiler = Compiler()
+        self.binary_combos =  [(i, j) for i in [0,1] for j in [0,1]]
 
     def tearDown(self):
         self.compiler = None
@@ -35,6 +36,235 @@ class TestLPComplierMethods(TestCase):
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
+
+    def test_op_plus(self):
+        beginning_state = {}
+        code = """a = 1
+        b = 3
+        c = a + b"""
+        expected_state = {"c": 4, "a": 1, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_minus_positive(self):
+        beginning_state = {}
+        code = """a = 3
+        b = 1
+        c = a - b"""
+        expected_state = {"c": 2, "a": 3, "b": 1}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_minus_negative(self):
+        beginning_state = {}
+        code = """a = 1
+        b = 3
+        c = a - b"""
+        expected_state = {"c": -2, "a": 1, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_mult_zero(self):
+        beginning_state = {}
+        code = """a = 0
+        b = 3
+        c = a * b"""
+        expected_state = {"c": 0, "a": 0, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_mult_one(self):
+        beginning_state = {}
+        code = """a = 1
+        b = 3
+        c = a * b"""
+        expected_state = {"c": 3, "a": 1, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_mult_other(self):
+        beginning_state = {}
+        code = """a = 50
+        b = 43
+        c = a * b"""
+        expected_state = {"c": 2150, "a": 50, "b": 43}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_div_normal(self):
+        beginning_state = {}
+        code = """a = 6
+        b = 3
+        c = a / b"""
+        expected_state = {"c": 2, "a": 6, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_div_fraction_positive(self):
+        beginning_state = {}
+        code = """a = 6
+        b = 4
+        c = a / b"""
+        expected_state = {"c": 1, "a": 6, "b": 4}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_div_fraction_zero(self):
+        beginning_state = {}
+        code = """a = 1
+        b = 2
+        c = a / b"""
+        expected_state = {"c": 0, "a": 1, "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_div_zero(self):
+        beginning_state = {}
+        code = """a = 6
+        b = 0
+        c = a / b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        self.assertRaises(ZeroDivisionError, prog.run, beginning_state)
+
+    def test_op_mod(self):
+        beginning_state = {}
+        code = """a = 6
+        b = 4
+        c = a % b"""
+        expected_state = {"c": 2, "a": 6, "b": 4}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_op_mod_zero(self):
+        beginning_state = {}
+        code = """a = 6
+        b = 0
+        c = a % b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        self.assertRaises(ZeroDivisionError, prog.run, beginning_state)
+
+    def test_op_or(self):
+        code = """c = a or b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.binary_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a or b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_and(self):
+        code = """c = a and b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.binary_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a and b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_is(self):
+        code = """c = a is b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.binary_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a is b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_is_not(self):
+        code = """c = a is not b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.binary_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a is not b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_not(self):
+        code = """b = not a"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for a in [0, 1]:
+            beginning_state = {"a": a}
+            expected_state = {"b": not a, "a": a}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_not_or(self):
+        code = """c = not (a or b)"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.binary_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": not (a or b), "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
 
     def test_only_newlines(self):
         beginning_state = {}

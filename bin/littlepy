@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from littlepy import Compiler
-import sys, os
+from littlepython import Compiler
+import os
+import sys
 
 if len(sys.argv) < 2:
     print("How to run:")

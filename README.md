@@ -7,11 +7,14 @@
 
 > The intent of the Little Python programming language is to implement a simple language that is easy for people with little to no coding experience to create a program. The need for such a language arose when creating a framework for competitions  where individuals of all skill levels can create a rudimentary AI to compete against various challenges. We wanted to “level” the playing field by having a language that is limited in functionality, creating an even playing field. Please keep this in mind when suggesting and/or commenting on the design features.
 
-###Setup
-1. Setup.py
-2. Run "python setup.py test" to install depences for tests and run them
-3. Run "pip install ." to install package locally
-4. Run "pip install . -e" to install locally and make sym links to make any update to the files in the package accessable on the local system
+### Install
+Run this following command to install from PyPI.
+
+```pip install littlepython```
+
+### Setup for development
+Run ```pip install -e .``` to install the package locally using sym links so changes to the code in the repo will be reflected globally.
+To run all the tests run ```python setup.py test```.
 
 
 ### Design Thoughts
