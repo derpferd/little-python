@@ -18,6 +18,9 @@ class Var(object):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return "<LP Var: '" + self.name + "'>"
+
 
 class LPProg(object):
     binaryOps = {"+": lambda a, b: a + b,
@@ -157,6 +160,8 @@ class Compiler(object):
 
     @staticmethod
     def get_op_priority(op):
+        if op in ('(', ')'):
+            return 0
         if op in ('and', 'or'):
             return 1
         if op in ('not'):
@@ -183,8 +188,11 @@ class Compiler(object):
                     operands_stack.append(self.build_last_tree(operands_stack, operators_stack))
                 operators_stack.append(token)
             elif token in self.uniaryOps:
-                operands_stack.append({"op": token, "a": tokens[token_pos + 1]})
-                token_pos += 1
+                while operators_stack and self.get_op_priority(operators_stack[-1]) >= self.get_op_priority(token):
+                    operands_stack.append(self.build_last_tree(operands_stack, operators_stack))
+                # operands_stack.append({"op": token, "a": Var(tokens[token_pos + 1])})
+                operators_stack.append(token)
+                # token_pos += 1
             elif token == '(':
                 operators_stack.append(token)
             elif token == ')':
