@@ -1,6 +1,9 @@
 # Copyright (C) Jonathan Beaulieu (beau0307@d.umn.edu)
 
+from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 import os
 import re
 import sys
@@ -20,7 +23,8 @@ class LPProg(object):
     binaryOps = {"+": lambda a, b: a + b,
                  "-": lambda a, b: a - b,
                  "*": lambda a, b: a * b,
-                 "/": lambda a, b: a / b,
+                 # This might become a problem in future versions this works for integers only
+                 "/": lambda a, b: a // b,
                  "%": lambda a, b: a % b,
                  "or": lambda a, b: a or b,
                  "and": lambda a, b: a and b,
@@ -76,7 +80,7 @@ class LPProg(object):
 
     # static_vars are varibles that the program will be able to access and change
     # the return value is the varibles at the end of the program
-    # both take the form of a dictionary with the varible name as the key and the value as the value
+    # both take the form of a dictionary with the variable name as the key and the value as the value
     def run(self, static_vars={}):
         state = copy(static_vars)
         for ast in self.program_ASTs:
