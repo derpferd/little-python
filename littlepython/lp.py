@@ -33,7 +33,7 @@ class LPProg(object):
                  "and": lambda a, b: a and b,
                  "is": lambda a, b: a is b,
                  "is not": lambda a, b: a is not b}
-    uniaryOps = {"not": lambda a: not a,
+    unaryOps = {"not": lambda a: not a,
                  "int": lambda a: int(a)}
 
     def __init__(self, program_ASTs):
@@ -61,8 +61,8 @@ class LPProg(object):
             elif operand in expression and isinstance(expression[operand], dict):
                 operands[operand] = LPProg.eval_expression(expression[operand], state)
         # print ("A:",expression)
-        if expression["op"] in LPProg.uniaryOps:
-            return LPProg.uniaryOps[expression["op"]](operands["a"])
+        if expression["op"] in LPProg.unaryOps:
+            return LPProg.unaryOps[expression["op"]](operands["a"])
         elif expression["op"] in LPProg.binaryOps:
             return LPProg.binaryOps[expression["op"]](operands["a"], operands["b"])
         raise Exception("Unknown op")
@@ -141,7 +141,7 @@ class Compiler(object):
     IF = 1
 
     binaryOps = ["+", "-", "*", "/", "%", "or", "and", "is", "is not"]
-    uniaryOps = ["not"]
+    unaryOps = ["not"]
 
     def __init__(self):
         self.controls = ["if"]
@@ -187,12 +187,10 @@ class Compiler(object):
                 while operators_stack and self.get_op_priority(operators_stack[-1]) >= self.get_op_priority(token):
                     operands_stack.append(self.build_last_tree(operands_stack, operators_stack))
                 operators_stack.append(token)
-            elif token in self.uniaryOps:
+            elif token in self.unaryOps:
                 while operators_stack and self.get_op_priority(operators_stack[-1]) >= self.get_op_priority(token):
                     operands_stack.append(self.build_last_tree(operands_stack, operators_stack))
-                # operands_stack.append({"op": token, "a": Var(tokens[token_pos + 1])})
                 operators_stack.append(token)
-                # token_pos += 1
             elif token == '(':
                 operators_stack.append(token)
             elif token == ')':
