@@ -3,7 +3,7 @@ from setuptools import setup
 # TODO: add better metadata https://python-packaging.readthedocs.io/en/latest/metadata.html
 
 setup(name='littlepython',
-    version='0.1.1',
+    version='0.1.2',
     description='A Super Simplified Python with a Little Syntactic Sugar',
     url='https://github.com/DerPferd/little-python',
     author='Jonathan Beaulieu',
