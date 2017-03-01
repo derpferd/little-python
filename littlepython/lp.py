@@ -245,7 +245,7 @@ class Compiler(object):
                 # else:
                 #     levels[-1] += stms
 
-                if ctrl == "if" and ("else" in tokens or "else" in tk_stream.peek_nxt_tokens()):
+                if ctrl == "if" and ("else" in tokens or ("else" in tk_stream.peek_nxt_tokens() and "}" not in tk_stream.peek_nxt_tokens())):
                     # we need to continue
                     level_ctrls.append("else")
                     levels.append(level)

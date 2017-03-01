@@ -543,6 +543,121 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_empty_if(self):
+        beginning_state = {"a": 2}
+        code = """if a is 1 {
+        }
+        b = 3"""
+        expected_state = {"a": 2, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_empty_if_2(self):
+        beginning_state = {"a": 2}
+        code = """if a is 2 {
+        }
+        b = 3"""
+        expected_state = {"a": 2, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_empty_if_else(self):
+        beginning_state = {"a": 2}
+        code = """if a is 1 {
+        } else {
+            b = 2
+        }"""
+        expected_state = {"a": 2, "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_empty_if_else_2(self):
+        beginning_state = {"a": 1, "b": 3}
+        code = """if a is 1 {
+        } else {
+            b = 2
+        }"""
+        expected_state = {"a": 1, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_empty_if_else_3(self):
+        beginning_state = {"a": 1, "b": 3}
+        code = """if a is 2 {
+            b = 2
+        } else {
+        }"""
+        expected_state = {"a": 1, "b": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_empty_if_else_4(self):
+        beginning_state = {"a": 1, "b": 3}
+        code = """if a is 1 {
+            b = 2
+        } else {
+        }"""
+        expected_state = {"a": 1, "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_nested_empty_if_else(self):
+        beginning_state = {"a": 1, "b": 3}
+        code = """if a is 1 {
+            b = 2
+            if a is 2 {
+            }
+        } else {
+        }"""
+        expected_state = {"a": 1, "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_nested_empty_if_else_2(self):
+        beginning_state = {"a": 1, "b": 3}
+        code = """if a is 1 {
+            b = 2
+            if a is 2 {
+            }
+        } else {
+        b = 4
+        }"""
+        expected_state = {"a": 1, "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
 
 if __name__ == '__main__':
     import unittest
