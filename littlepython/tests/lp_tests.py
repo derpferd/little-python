@@ -476,6 +476,28 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_inline_comment_in_statement(self):
+        beginning_state = {"a": 1, "b": 0}
+        code = """if a is 1 { # This is a comment\nb=1\n}"""
+        expected_state = {"a": 1, "b": 1}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_inline_comment_in_nested_statement(self):
+        beginning_state = {"a": 1, "b": 1, "c": 0}
+        code = """if a is 1 { # This is a comment\nif b is 1 {\nc=1\n}\n}"""
+        expected_state = {"a": 1, "b": 1, "c": 1}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
     def test_beginning_state(self):
         beginning_state = {"b": 2}
         code = """a=b"""

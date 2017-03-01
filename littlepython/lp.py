@@ -259,7 +259,9 @@ class Compiler(object):
                 # parse for control
                 statement = {}
                 statement["op"] = tokens[0]
-                statement["ctrl"] = self.parse_exp(tokens[1:-1])  # -1 to remove to '{' at the end
+                # remove last { and comment if there is one.
+                new_tokens = tokens[:len(tokens)-1-tokens[::-1].index("{")]
+                statement["ctrl"] = self.parse_exp(new_tokens[1:])
 
                 level_ctrls.append(statement["op"])
                 levels.append(statement)
