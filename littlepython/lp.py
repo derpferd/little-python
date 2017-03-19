@@ -32,9 +32,13 @@ class LPProg(object):
                  "or": lambda a, b: a or b,
                  "and": lambda a, b: a and b,
                  "is": lambda a, b: a is b,
-                 "is not": lambda a, b: a is not b}
+                 "is not": lambda a, b: a is not b,
+                 "<": lambda a, b: a < b,
+                 ">": lambda a, b: a > b,
+                 "<=": lambda a, b: a <= b,
+                 ">=": lambda a, b: a >= b}
     unaryOps = {"not": lambda a: not a,
-                 "int": lambda a: int(a)}
+                "int": lambda a: int(a)}
 
     def __init__(self, program_ASTs):
         self.program_ASTs = program_ASTs
@@ -114,7 +118,7 @@ class TokenStreamer(object):
 
     @staticmethod
     def tokenize(line):
-        token_iter = (m.group(0) for m in re.finditer(r'[-+*/(){}=%#]|[A-Za-z_][A-Za-z0-9_]*|\d+', line))
+        token_iter = (m.group(0) for m in re.finditer(r'[<>]?[-+*/(){}=%#<>]|[A-Za-z_][A-Za-z0-9_]*|\d+', line))
         return list(token_iter)
 
     def has_nxt_line(self):
@@ -140,7 +144,7 @@ class Compiler(object):
     NONE = 0
     IF = 1
 
-    binaryOps = ["+", "-", "*", "/", "%", "or", "and", "is", "is not"]
+    binaryOps = ["+", "-", "*", "/", "%", "or", "and", "is", "is not", ">", "<", "<=", ">="]
     unaryOps = ["not"]
 
     def __init__(self):
@@ -166,7 +170,7 @@ class Compiler(object):
             return 1
         if op in ('not'):
             return 2
-        if op in ('is', 'is not'):
+        if op in ('is', 'is not', '>', '<', '<=', '>='):
             return 3
         if op in ('+', '-'):
             return 4

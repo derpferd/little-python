@@ -9,7 +9,8 @@ from littlepython.lp import Compiler
 class TestLPComplierMethods(TestCase):
     def setUp(self):
         self.compiler = Compiler()
-        self.binary_combos =  [(i, j) for i in [0,1] for j in [0,1]]
+        self.binary_combos = [(i, j) for i in [0, 1] for j in [0, 1]]
+        self.int_combos = [(i, j) for i in [-10, -2, -1, 0, 1, 2, 5, 10, 100] for j in [-10, -2, -1, 0, 1, 2, 5, 10, 100]]
 
     def tearDown(self):
         self.compiler = None
@@ -188,6 +189,58 @@ class TestLPComplierMethods(TestCase):
         prog = self.compiler.compile(code.split("\n"))
 
         self.assertRaises(ZeroDivisionError, prog.run, beginning_state)
+
+    def test_op_lt(self):
+        code = """c = a < b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.int_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a < b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_gt(self):
+        code = """c = a > b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.int_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a > b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_lte(self):
+        code = """c = a <= b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.int_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a <= b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
+
+    def test_op_gte(self):
+        code = """c = a >= b"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        for combo in self.int_combos:
+            a, b = combo
+            beginning_state = {"a": a, "b": b}
+            expected_state = {"c": a >= b, "a": a, "b": b}
+            ending_state = prog.run(beginning_state)
+            self.assertEqual(expected_state, ending_state)
 
     def test_op_or(self):
         code = """c = a or b"""
