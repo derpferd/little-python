@@ -26,7 +26,7 @@ To run all the tests run ```python setup.py test```.
 > > Must start with letter or underscore otherwise must be alphanumeric or an underscore.
 
 > Operators
-> > Tentative list of operators: +,-,*,/,or,and,not,is(==)
+> > Tentative list of operators: +,-,*,/,or,and,not,is(==),<,>,<=,>=
 
 > > I have decided that instead of supporting both the 'is’ and ‘==’ operators I would just support 'is’.
 
@@ -53,7 +53,7 @@ This could become a feature in the future
 * ()
 * *,/,%
 * +,-
-* is, is not
+* is, is not, <, >, <=, >=
 * not
 * And, or
 
