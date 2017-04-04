@@ -51,6 +51,19 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_op_negative_const(self):
+        beginning_state = {}
+        code = """a = -1
+        b = -3
+        c = a + b"""
+        expected_state = {"c": -4, "a": -1, "b": -3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code.split("\n"))
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
     def test_op_minus_positive(self):
         beginning_state = {}
         code = """a = 3

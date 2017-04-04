@@ -118,7 +118,7 @@ class TokenStreamer(object):
 
     @staticmethod
     def tokenize(line):
-        token_iter = (m.group(0) for m in re.finditer(r'[<>]?[-+*/(){}=%#<>]|[A-Za-z_][A-Za-z0-9_]*|\d+', line))
+        token_iter = (m.group(0) for m in re.finditer(r'-?\d+|[<>]?[-+*/(){}=%#<>]|[A-Za-z_][A-Za-z0-9_]*', line))
         return list(token_iter)
 
     def has_nxt_line(self):
@@ -203,7 +203,7 @@ class Compiler(object):
                     token = operators_stack[-1]
                     operands_stack.append(tree)
                 operators_stack.pop()
-            elif token.isdigit():
+            elif token.isdigit() or (token[0] == "-" and token[1:].isdigit()):
                 operands_stack.append({"op": "int", "a": int(token)})
             elif token and token[0] == "#":
                 token_pos = len(tokens)
