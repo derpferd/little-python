@@ -101,11 +101,11 @@ This could become a feature in the future
 > - Execute Abstract Syntax Tree with arguments.
  
 ### Todo
-Add better metadata to setup.py
-Add negative constant numbers
-Add arrays
-Add functions
-Add scoping
-Get to and stay at 100% code coverage.
- - Currently at 95% for interpreter.py and 91% for parser.py
- - Most of the uncovered code are edge cases, therefore we need more test cases.
+ - Add better metadata to setup.py
+ - Add negative constant numbers
+ - Add arrays
+ - Add functions
+ - Add scoping
+ - Get to and stay at 100% code coverage.
+   - Currently at 95% for interpreter.py and 91% for parser.py
+   - Most of the uncovered code are edge cases, therefore we need more test cases.
