@@ -55,19 +55,23 @@ This could become a feature in the future
 * +,-
 * is, is not, <, >, <=, >=
 * not
-* And, or
+* and, or
 
 
 
 ### Syntax
 **statements** ::= statement
-                 | statement statement
+                 | statement statements
 
 **statement**  ::= variable '=' expression newline
                  | control newline
 
 **control**    ::= 'if ' ctrl_exp { statements }
                  | 'if ' ctrl_exp { statements } 'else' { statements }
+                 | 'if ' ctrl_exp { statements } elif 'else' { statements }
+
+**elif**       ::= 'elif ' ctrl_exp { statements }
+                 | elif 'elif ' ctrl_exp { statements }
 
 **ctrl_exp**   ::= expression
                  | ctrl_exp 'and' ctrl_exp
@@ -82,6 +86,7 @@ This could become a feature in the future
 **term**       ::= factor
                  | term '*' factor
                  | term '/' factor
+                 | term '%' factor
 
 **factor**     ::= number
                  | variable
@@ -91,27 +96,16 @@ This could become a feature in the future
 
 ### Interpreter/Compiler design
 > I have for better or worse started with a design for a two part system. First the script will be compiled into an AST. Then it will be able to be run(interpreted). State will not be saved however it is possible to pass global variables into the program and get the state of all variables at the end of the program.
-Parse script into Abstract Syntax Tree. (This is where all syntax error will be caught)
-Reduce Abstract Syntax Tree.
-Execute Abstract Syntax Tree with arguments.
-
-### AST Syntax
-> The program is represented as a list of ASTs. Each AST is a statement in the form of a dictionary. Each statement is executed in order. Below is the syntax for a given statement.
- ~~~
- {'op': '+', 'a': a, 'b': b}    // add subtree a to subtree b
- {'op': '-', 'a': a, 'b': b}    // subtract subtree b from subtree a
- {'op': '*', 'a': a, 'b': b}    // multiply subtree a by subtree b
- {'op': '/', 'a': a, 'b': b}    // divide subtree a from subtree b
- {'op': '%', 'a': a, 'b': b}    // modulo of subtree a by subtree b
- {'op': 'is', 'a': a, 'b': b}   // test if a is equal to b
- {'op': 'and', 'a': a, 'b': b}  // logical and of a and b
- {'op': 'or', 'a': a, 'b': b}   // logical or of a and b
- {'op': 'not', 'a': a}          // logical not of a
- {'op': 'int', 'a': a}          // converts or states that a value is an int
- {'op': 'if', 'ctrl': a, 'if': b, 'else': c}// if a is true do b else do c (the else if optional)
- {'op': '=', 'var': a, 'exp': b}  // set variable a to b
- ~~~
+> - Parse script into Abstract Syntax Tree. (This is where all syntax error will be caught)
+> - Reduce Abstract Syntax Tree.
+> - Execute Abstract Syntax Tree with arguments.
  
 ### Todo
 Add better metadata to setup.py
-
+Add negative constant numbers
+Add arrays
+Add functions
+Add scoping
+Get to and stay at 100% code coverage.
+ - Currently at 95% for interpreter.py and 91% for parser.py
+ - Most of the uncovered code are edge cases, therefore we need more test cases.

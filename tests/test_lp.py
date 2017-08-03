@@ -22,7 +22,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -33,7 +33,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -46,23 +46,23 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 4, "a": 1, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
-    def test_op_negative_const(self):
-        beginning_state = {}
-        code = """a = -1
-        b = -3
-        c = a + b"""
-        expected_state = {"c": -4, "a": -1, "b": -3}
-
-        # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
-
-        ending_state = prog.run(beginning_state)
-        self.assertEqual(expected_state, ending_state)
+    # def test_op_negative_const(self):
+    #     beginning_state = {}
+    #     code = """a = -1
+    #     b = -3
+    #     c = a + b"""
+    #     expected_state = {"c": -4, "a": -1, "b": -3}
+    #
+    #     # compile code into LPProg
+    #     prog = self.compiler.compile(code)
+    #
+    #     ending_state = prog.run(beginning_state)
+    #     self.assertEqual(expected_state, ending_state)
 
     def test_op_minus_positive(self):
         beginning_state = {}
@@ -72,7 +72,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 2, "a": 3, "b": 1}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -85,7 +85,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": -2, "a": 1, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -98,7 +98,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 0, "a": 0, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -111,7 +111,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 3, "a": 1, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -124,7 +124,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 2150, "a": 50, "b": 43}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -137,7 +137,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 2, "a": 6, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -150,7 +150,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 1, "a": 6, "b": 4}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -163,7 +163,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 0, "a": 1, "b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -175,7 +175,7 @@ class TestLPComplierMethods(TestCase):
         c = a / b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         self.assertRaises(ZeroDivisionError, prog.run, beginning_state)
 
@@ -187,7 +187,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 2, "a": 6, "b": 4}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -199,7 +199,7 @@ class TestLPComplierMethods(TestCase):
         c = a % b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         self.assertRaises(ZeroDivisionError, prog.run, beginning_state)
 
@@ -207,7 +207,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a < b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.int_combos:
             a, b = combo
@@ -220,7 +220,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a > b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.int_combos:
             a, b = combo
@@ -233,7 +233,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a <= b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.int_combos:
             a, b = combo
@@ -246,7 +246,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a >= b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.int_combos:
             a, b = combo
@@ -259,7 +259,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a or b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.binary_combos:
             a, b = combo
@@ -272,7 +272,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a and b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.binary_combos:
             a, b = combo
@@ -285,7 +285,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a is b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.binary_combos:
             a, b = combo
@@ -298,7 +298,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = a is not b"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.binary_combos:
             a, b = combo
@@ -311,7 +311,7 @@ class TestLPComplierMethods(TestCase):
         code = """b = not a"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for a in [0, 1]:
             beginning_state = {"a": a}
@@ -323,7 +323,7 @@ class TestLPComplierMethods(TestCase):
         code = """c = not (a or b)"""
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         for combo in self.binary_combos:
             a, b = combo
@@ -338,7 +338,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -349,7 +349,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -360,7 +360,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -371,7 +371,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a_b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -382,7 +382,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"_b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -393,7 +393,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"b": 40 % 1}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -404,7 +404,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2, "b": 0, "c": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -417,7 +417,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -430,7 +430,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -442,10 +442,10 @@ class TestLPComplierMethods(TestCase):
         if c is 3 {
             d = 4
         }"""
-        expected_state = {"c": 3, "d":4}
+        expected_state = {"c": 3, "d": 4}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -460,7 +460,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 5}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -475,7 +475,7 @@ class TestLPComplierMethods(TestCase):
             expected_state = {"c": 3}
 
             # compile code into LPProg
-            prog = self.compiler.compile(code.split("\n"))
+            prog = self.compiler.compile(code)
 
             ending_state = prog.run(beginning_state)
             self.assertEqual(expected_state, ending_state)
@@ -493,7 +493,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"c": 5}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -504,7 +504,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"asdfasdfasdfasdifgasdfhga232hjkbljh123b1jh2b31j2hb": 23}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -515,7 +515,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 3, "b": 4}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -526,7 +526,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 3, "b": 4}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -537,7 +537,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 3, "b": 4}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -548,7 +548,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 1, "b": 1}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -559,7 +559,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 1, "b": 1, "c": 1}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -570,7 +570,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2, "b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -589,7 +589,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -604,7 +604,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -617,7 +617,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -630,7 +630,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -644,7 +644,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 2, "b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -658,7 +658,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 1, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -672,7 +672,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 1, "b": 3}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -686,7 +686,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 1, "b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -702,7 +702,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 1, "b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
@@ -719,13 +719,7 @@ class TestLPComplierMethods(TestCase):
         expected_state = {"a": 1, "b": 2}
 
         # compile code into LPProg
-        prog = self.compiler.compile(code.split("\n"))
+        prog = self.compiler.compile(code)
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
-
-
-if __name__ == '__main__':
-    import unittest
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestLPComplierMethods)
-    unittest.TextTestRunner(verbosity=2).run(suite)
