@@ -1,9 +1,10 @@
 from setuptools import setup
+from littlepython import version
 
 # TODO: add better metadata https://python-packaging.readthedocs.io/en/latest/metadata.html
 
 setup(name='littlepython',
-      version='0.2.0',
+      version=version,
       description='A Super Simplified Python with a Little Syntactic Sugar',
       url='https://github.com/DerPferd/little-python',
       author='Jonathan Beaulieu',
