@@ -1,7 +1,7 @@
 import pytest
 
 from littlepython import Features
-from littlepython.tokenizer import Tokenizer, Tokens
+from littlepython.tokenizer import Tokenizer, Tokens, Token
 from tests import t
 
 
@@ -245,3 +245,33 @@ def test_get_next_token_8():
     tokenizer.get_next_token()
     with pytest.raises(Exception):
         tokenizer.get_next_token()
+
+
+@pytest.mark.parametrize("token_str,token_obj", Tokens.get_all(Features.ALL).items())
+def test_token_str_and_repr(token_str, token_obj):
+    s = str(token_obj)
+    assert s == "Token<type:{}, value:{}>".format(token_obj.type, token_str)
+    assert s == repr(token_obj)
+
+
+def test_token_eq_with_different_type():
+    assert t("1") != 1
+    assert t("ab") != "ab"
+
+
+def test_token_from_str_invalid():
+    with pytest.raises(ValueError) as err:
+        Token.from_str("^")
+    assert "Invalid input" in str(err.value)
+
+
+def test_tokenizer__iter__():
+    tokenizer = Tokenizer("adsf")
+    assert tokenizer is tokenizer.__iter__()
+
+
+def test_tokenizer_stop_iter():
+    tokenizer = Tokenizer("")
+    assert next(tokenizer) == t(None)
+    with pytest.raises(StopIteration):
+        next(tokenizer)

@@ -93,10 +93,9 @@ class Token(object):
         self.value = value
 
     def __str__(self):
-        return "Token<type:{}, value:{}>".format(self.type, repr(self.value))
+        return "Token<type:{}, value:{}>".format(self.type, str(self.value))
 
-    def __repr__(self):
-        return self.__str__()
+    __repr__ = __str__
 
     def __eq__(self, other):
         if type(self) != type(other):
@@ -119,6 +118,13 @@ class Token(object):
 
 
 class Tokens(object):
+    @staticmethod
+    def get_all(features):
+        keys = Tokens.get_keywords(features)
+        keys.update(Tokens.get_non_alpha(features))
+        keys.update(Tokens.get_multi_word_keywords(features))
+        return OrderedDict(sorted(list(keys.items()), key=lambda t: len(t[0]), reverse=True))
+
     @staticmethod
     def get_multi_word_keywords(features):
         """This returns an OrderedDict containing the multi word keywords in order of length.

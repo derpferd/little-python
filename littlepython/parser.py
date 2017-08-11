@@ -119,12 +119,15 @@ class IfElifElseControl(AST):
 
 
 class Parser(object):
-    CONTROL_TYPES = {TokenTypes.IF, TokenTypes.ELIF, TokenTypes.ELSE}
+    @staticmethod
+    def get_control_types(features):
+        return {TokenTypes.IF, TokenTypes.ELIF, TokenTypes.ELSE}
 
     def __init__(self, tokenizer, features=Features.ALL):
         self.tokenizer = tokenizer
         self.cur_token = next(tokenizer)
         self.features = features
+        self.control_type = self.get_control_types(features)
 
     def error(self, msg=""):
         raise Exception("Invalid syntax: " + msg)
@@ -158,7 +161,7 @@ class Parser(object):
             self.eat(TokenTypes.ASSIGN)
             right = self.expression()
             return Assign(op, left, right)
-        elif self.cur_token.type in self.CONTROL_TYPES:
+        elif self.cur_token.type in self.control_type:
             return self.control()
 
     def control(self):
