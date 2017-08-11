@@ -1,264 +1,7 @@
 from __future__ import unicode_literals
 
-from enum import Enum
-
-counter = 0
-
-
-def auto():
-    global counter
-    counter += 1
-    return counter
-
-
-def alfa_(w):
-    """This function returns True if the given string 'w' contains only alphabetic or underscore characters
-
-    Note: It is implemented in a hacky way to increase speed
-    """
-    return (w + "a").replace('_', '').isalpha()
-
-
-def alnum_(w):
-    """This function returns True if the given string 'w' contains only alphabetic, numeric or underscore characters
-
-    Note: It is implemented in a hacky way to increase speed
-    """
-    return (w + "a").replace('_', '').isalnum()
-
-
-class TokenTypes(Enum):
-    ADD = auto()
-    SUB = auto()
-    MULT = auto()
-    DIV = auto()
-    MOD = auto()
-    AND = auto()
-    OR = auto()
-    NOT = auto()
-    CONST = auto()
-    VAR = auto()
-    GREATER = auto()
-    GREATER_EQUAL = auto()
-    LESS = auto()
-    LESS_EQUAL = auto()
-    EQUAL = auto()
-    NOT_EQUAL = auto()
-    LPAREN = auto()
-    RPAREN = auto()
-    LBRACE = auto()
-    RBRACE = auto()
-    ASSIGN = auto()
-    IF = auto()
-    ELIF = auto()
-    ELSE = auto()
-    NEW_LINE = auto()
-    EOF = auto()
-
-    @staticmethod
-    def from_str(s):
-        return {'if': TokenTypes.IF,
-                'elif': TokenTypes.ELIF,
-                'else': TokenTypes.ELSE,
-                'and': TokenTypes.AND,
-                'or': TokenTypes.OR,
-                'not': TokenTypes.NOT,
-                'is': TokenTypes.EQUAL,
-                'is not': TokenTypes.NOT_EQUAL,
-                '+': TokenTypes.ADD,
-                '-': TokenTypes.SUB,
-                '*': TokenTypes.MULT,
-                '/': TokenTypes.DIV,
-                '%': TokenTypes.MOD,
-                '<': TokenTypes.LESS,
-                '>': TokenTypes.GREATER,
-                '{': TokenTypes.LBRACE,
-                '}': TokenTypes.RBRACE,
-                '(': TokenTypes.LPAREN,
-                ')': TokenTypes.RPAREN,
-                '=': TokenTypes.ASSIGN,
-                '<=': TokenTypes.LESS_EQUAL,
-                '>=': TokenTypes.GREATER_EQUAL,
-                '\n': TokenTypes.NEW_LINE,
-                None: TokenTypes.EOF}.get(s, None)
-
-
-class Token(object):
-    def __init__(self, type, value):
-        self.type = type
-        self.value = value
-
-    def __str__(self):
-        return "Token<type:{}, value:{}>".format(self.type, repr(self.value))
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __eq__(self, other):
-        if type(self) != type(other):
-            return False
-        return self.type == other.type and self.value == other.value
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    @staticmethod
-    def from_str(s):
-        token_type = TokenTypes.from_str(s)
-        if token_type:
-            return Token(token_type, s)
-        if isinstance(s, str) and s.isdigit() or isinstance(s, int):
-            return Token(TokenTypes.CONST, int(s))
-        if isinstance(s, str) and len(s) and alfa_(s[0]) and alnum_(s[1:]):
-            return Token(TokenTypes.VAR, s)
-        raise ValueError("Invalid input")
-
-
-KEYWORDS = {
-    'if': Token(TokenTypes.IF, 'if'),
-    'elif': Token(TokenTypes.ELIF, 'elif'),
-    'else': Token(TokenTypes.ELSE, 'else'),
-    'not': Token(TokenTypes.NOT, 'not'),
-    'is': Token(TokenTypes.EQUAL, 'is'),
-    'and': Token(TokenTypes.AND, 'and'),
-    'or': Token(TokenTypes.OR, 'or'),
-    # 'is not': Token(TokenTypes.NOT_EQUAL, 'is not'),
-}
-
-NON_ALPHA_1 = {  # non-alphanumeric single char tokens
-    '+': Token(TokenTypes.ADD, '+'),
-    '-': Token(TokenTypes.SUB, '-'),
-    '*': Token(TokenTypes.MULT, '*'),
-    '/': Token(TokenTypes.DIV, '/'),
-    '%': Token(TokenTypes.MOD, '%'),
-    '<': Token(TokenTypes.LESS, '<'),
-    '>': Token(TokenTypes.GREATER, '>'),
-    '{': Token(TokenTypes.LBRACE, '{'),
-    '}': Token(TokenTypes.RBRACE, '}'),
-    '(': Token(TokenTypes.LPAREN, '('),
-    ')': Token(TokenTypes.RPAREN, ')'),
-    '=': Token(TokenTypes.ASSIGN, '='),
-}
-
-NON_ALPHA_2 = {  # non-alphanumeric double char tokens
-    '<=': Token(TokenTypes.LESS_EQUAL, '<='),
-    '>=': Token(TokenTypes.GREATER_EQUAL, '>='),
-}
-
-
-class Tokenizer(object):
-    def __init__(self, text):
-        self.text = text
-        self.cur_pos = -1
-        self.cur_char = ""
-        self.last_was_new_line = False
-        self.last_was_eof = False
-        self.advance()
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self.next()
-
-    def next(self):
-        token = self.get_next_token()
-        if self.last_was_eof:
-            raise StopIteration()
-        if token.type == TokenTypes.EOF:
-            self.last_was_eof = True
-        return token
-
-    def advance(self):
-        self.cur_pos += 1
-        if self.cur_pos < len(self.text):
-            self.cur_char = self.text[self.cur_pos]
-        else:
-            self.cur_char = None
-
-    def peek(self, dist=1):
-        pos = self.cur_pos + dist
-        if pos < len(self.text):
-            return self.text[pos]
-        else:
-            return None
-
-    def skip_comment(self):
-        while self.cur_char is not None and self.cur_char != '\n':
-            self.advance()
-
-    def skip_whitespace(self):
-        while self.cur_char is not None and self.cur_char.isspace() and self.cur_char != "\n":
-            self.advance()
-
-    def number(self):
-        result = ""
-        while self.cur_char is not None and self.cur_char.isdigit():
-            result += self.cur_char
-            self.advance()
-
-        return Token(TokenTypes.CONST, int(result))
-
-    def id(self):
-        result = ""
-        while self.cur_char is not None and alnum_(self.cur_char):
-            result += self.cur_char
-            self.advance()
-
-        return KEYWORDS.get(result, Token(TokenTypes.VAR, result))
-
-    def test_for_is_not(self):
-        if self.cur_pos + len("is not") > len(self.text):
-            return False
-        result = "".join([self.peek(i) for i in range(len("is not"))])
-        if result == "is not":
-            return True
-
-    def get_next_token(self):
-        while self.cur_char is not None:
-            if self.cur_char.isspace() and self.cur_char != "\n":
-                self.skip_whitespace()
-                continue
-
-            if self.cur_char == "#":
-                self.advance()
-                self.skip_comment()
-                continue
-
-            if self.cur_char == "\n":
-                if self.last_was_new_line:
-                    self.advance()
-                    continue
-                self.last_was_new_line = True
-                self.advance()
-                return Token(TokenTypes.NEW_LINE, "\n")
-            self.last_was_new_line = False
-
-            if self.test_for_is_not():
-                for i in range(len("is not")):
-                    self.advance()
-                return Token(TokenTypes.NOT_EQUAL, "is not")
-
-            if alfa_(self.cur_char):
-                return self.id()
-
-            if self.cur_char.isdigit():
-                return self.number()
-
-            if self.peek() is not None and self.cur_char + self.peek() in NON_ALPHA_2:
-                result = self.cur_char + self.peek()
-                self.advance()
-                self.advance()
-                return NON_ALPHA_2[result]
-
-            if self.cur_char in NON_ALPHA_1:
-                result = self.cur_char
-                self.advance()
-                return NON_ALPHA_1[result]
-
-            raise Exception("Ran into invalid char '{}' at pos {}".format(self.cur_char, self.cur_pos))
-
-        return Token(TokenTypes.EOF, None)
+from littlepython.feature import Features
+from littlepython.tokenizer import TokenTypes
 
 
 class AST(object):
@@ -285,7 +28,6 @@ class AST(object):
 
 class BinaryOp(AST):
     def __init__(self, op, left, right):
-        assert isinstance(op, Token)
         self.token = self.op = op
         self.left = left
         self.right = right
@@ -379,16 +121,17 @@ class IfElifElseControl(AST):
 class Parser(object):
     CONTROL_TYPES = {TokenTypes.IF, TokenTypes.ELIF, TokenTypes.ELSE}
 
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer, features=Features.ALL):
         self.tokenizer = tokenizer
-        self.cur_token = tokenizer.next()
+        self.cur_token = next(tokenizer)
+        self.features = features
 
     def error(self, msg=""):
         raise Exception("Invalid syntax: " + msg)
 
     def eat(self, token_type):
         if self.cur_token.type == token_type:
-            self.cur_token = self.tokenizer.next()
+            self.cur_token = next(self.tokenizer)
         else:
             self.error("Excepted token type {} got {}".format(token_type, self.cur_token.type))
 

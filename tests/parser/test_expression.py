@@ -1,4 +1,5 @@
-from littlepython.parser import BinaryOp, Parser, Tokenizer, Var, Token, TokenTypes, Const, UnaryOp
+from littlepython.parser import BinaryOp, Parser, Var, Const, UnaryOp
+from littlepython.tokenizer import Tokenizer, Token, TokenTypes
 from tests.parser import ADD, DIV, NOT, EOF, v, c, add, _not, div, _and, sub, _or, gt, lt, mod, ge, le, mult, _is_not, \
     _is
 

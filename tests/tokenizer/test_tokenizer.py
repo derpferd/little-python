@@ -1,6 +1,7 @@
 import pytest
 
-from littlepython.parser import Tokenizer
+from littlepython import Features
+from littlepython.tokenizer import Tokenizer, Tokens
 from tests import t
 
 
@@ -91,27 +92,95 @@ def test_id():
     assert tokenizer.id() == t("_a")
 
 
-def test_test_for_is_not():
+@pytest.mark.parametrize("token_str,token_obj", Tokens.get_multi_word_keywords(Features.ALL).items())
+def test_test_for_multi_word_keyword_all(token_str, token_obj):
+    tokenizer = Tokenizer(token_str)
+    assert tokenizer.test_for_multi_word_keyword() == token_obj
+
+
+def test_test_for_multi_word_keyword():
     tokenizer = Tokenizer("is not")
-    assert tokenizer.test_for_is_not()
+    assert tokenizer.test_for_multi_word_keyword() == t("is not")
     tokenizer = Tokenizer("is not bla")
-    assert tokenizer.test_for_is_not()
+    assert tokenizer.test_for_multi_word_keyword() == t("is not")
     tokenizer = Tokenizer("bla is not foo bar")
     for _ in range(4):
         tokenizer.advance()
-    assert tokenizer.test_for_is_not()
+    assert tokenizer.test_for_multi_word_keyword() == t("is not")
     tokenizer = Tokenizer("is")
-    assert not tokenizer.test_for_is_not()
+    assert not tokenizer.test_for_multi_word_keyword()
     tokenizer = Tokenizer("is nob")
-    assert not tokenizer.test_for_is_not()
+    assert not tokenizer.test_for_multi_word_keyword()
     tokenizer = Tokenizer("bla is nob foo bar")
     for _ in range(4):
         tokenizer.advance()
-    assert not tokenizer.test_for_is_not()
+    assert not tokenizer.test_for_multi_word_keyword()
     tokenizer = Tokenizer("bla ps not foo bar")
     for _ in range(4):
         tokenizer.advance()
-    assert not tokenizer.test_for_is_not()
+    assert not tokenizer.test_for_multi_word_keyword()
+
+
+def test_test_for_multi_word_keyword_trailing_alpha_1():
+    tokenizer = Tokenizer("is nott")
+    assert not tokenizer.test_for_multi_word_keyword()
+
+
+def test_test_for_multi_word_keyword_trailing_alpha_2():
+    tokenizer = Tokenizer("bla is notfoo bar")
+    for _ in range(4):
+        tokenizer.advance()
+    assert not tokenizer.test_for_multi_word_keyword()
+
+
+def test_test_for_multi_word_keyword_trailing_digit_1():
+    tokenizer = Tokenizer("is not3")
+    assert not tokenizer.test_for_multi_word_keyword()
+
+
+def test_test_for_multi_word_keyword_trailing_digit_2():
+    tokenizer = Tokenizer("bla is not12 bar")
+    for _ in range(4):
+        tokenizer.advance()
+    assert not tokenizer.test_for_multi_word_keyword()
+
+
+@pytest.mark.parametrize("token_str,token_obj", Tokens.get_non_alpha(Features.ALL).items())
+def test_test_for_non_alpha(token_str, token_obj):
+    tokenizer = Tokenizer(token_str)
+    assert tokenizer.test_for_non_alpha() == token_obj
+
+
+@pytest.mark.parametrize("token_str,token_obj", Tokens.get_non_alpha(Features.ALL).items())
+def test_test_for_non_alpha_without_spaces(token_str, token_obj):
+    tokenizer = Tokenizer("bla2" + token_str + "1")
+    for _ in range(4):
+        tokenizer.advance()
+    assert tokenizer.test_for_non_alpha() == token_obj
+
+
+@pytest.mark.parametrize("token_str,token_obj", Tokens.get_non_alpha(Features.ALL).items())
+def test_test_for_non_alpha_with_spaces(token_str, token_obj):
+    tokenizer = Tokenizer("bla2 " + token_str + " 1")
+    for _ in range(5):
+        tokenizer.advance()
+    assert tokenizer.test_for_non_alpha() == token_obj
+
+
+@pytest.mark.parametrize("token_str,token_obj", Tokens.get_non_alpha(Features.ALL).items())
+def test_test_for_non_alpha_with_digits(token_str, token_obj):
+    tokenizer = Tokenizer("2" + token_str + "1")
+    for _ in range(1):
+        tokenizer.advance()
+    assert tokenizer.test_for_non_alpha() == token_obj
+
+
+@pytest.mark.parametrize("token_str,token_obj", Tokens.get_non_alpha(Features.ALL).items())
+def test_test_for_non_alpha_with_alpha(token_str, token_obj):
+    tokenizer = Tokenizer("a" + token_str + "b")
+    for _ in range(1):
+        tokenizer.advance()
+    assert tokenizer.test_for_non_alpha() == token_obj
 
 
 def test_get_next_token_1():
@@ -131,24 +200,24 @@ def test_get_next_token_1():
 def test_get_next_token_2():
     tokenizer = Tokenizer("(1+2)/4 > 1 + 2 and 1 < 3 or 2%5 >= 3 or 3*4 <= 4/2 and not 1 is 2 or 4 is not 5")
     s = t("and")
-    tokens = [t("("), t("1"), t("+"), t("2"), t(")"), t("/"), t("4"), t(">"), t("1"), t("+"), t("2"), t("and"), t("1"), t("<"), t("3"), t("or"), t("2"), t("%"), t("5"), t(">="), t("3"), t("or"), t("3"), t("*"), t("4"), t("<="), t("4"), t("/"), t("2"), t("and"), t("not"), t("1"), t("is"), t("2"), t("or"), t("4"), t("is not"), t("5")]
+    tokens = [t("("), t("1"), t("+"), t("2"), t(")"), t("/"), t("4"), t(">"), t("1"), t("+"), t("2"), t("and"), t("1"),
+              t("<"), t("3"), t("or"), t("2"), t("%"), t("5"), t(">="), t("3"), t("or"), t("3"), t("*"), t("4"),
+              t("<="), t("4"), t("/"), t("2"), t("and"), t("not"), t("1"), t("is"), t("2"), t("or"), t("4"),
+              t("is not"), t("5")]
     for token in tokens:
         assert tokenizer.get_next_token() == token
 
 
 def test_get_next_token_3():
     tokenizer = Tokenizer("if\n{ else } if else elif")
-    tokens = [t("if"), t("\n"), t("{"),
-              t("else"), t("}"), t("if"),
-              t("else"), t("elif"), t(None)]
+    tokens = [t("if"), t("\n"), t("{"), t("else"), t("}"), t("if"), t("else"), t("elif"), t(None)]
     for token in tokens:
         assert tokenizer.get_next_token() == token
 
 
 def test_get_next_token_4():
     tokenizer = Tokenizer("bar\n\n\n\nfoo")
-    tokens = [t("bar"), t("\n"), t("foo"),
-              t(None)]
+    tokens = [t("bar"), t("\n"), t("foo"), t(None)]
     for token in tokens:
         assert tokenizer.get_next_token() == token
 

@@ -1,4 +1,4 @@
-from littlepython.parser import Token
+from littlepython.tokenizer import Token
 
 
 def t(s):
