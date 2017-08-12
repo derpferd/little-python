@@ -1,4 +1,4 @@
-from littlepython.parser import Const, Var, BinaryOp, UnaryOp, Assign, IfElifElseControl, If, Block
+from littlepython.parser import Const, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block
 from littlepython.tokenizer import Token, TokenTypes
 from tests import t
 
@@ -84,7 +84,7 @@ def _if(expr, block):
 
 
 def ctrl(ifs, els):
-    return IfElifElseControl(ifs, els)
+    return ControlBlock(ifs, els)
 
 
 def c(v):

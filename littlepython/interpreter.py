@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from copy import copy
 
-from littlepython.parser import Assign, Block, IfElifElseControl, If, BinaryOp, UnaryOp
+from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
 
 
 class SymbolTable(object):
@@ -71,8 +71,8 @@ class LPProg(object):
         for child in node.children:
             self.handle(child, sym_tbl)
 
-    def handle_ifelifelsecontrol(self, node, sym_tbl):
-        assert isinstance(node, IfElifElseControl)
+    def handle_controlblock(self, node, sym_tbl):
+        assert isinstance(node, ControlBlock)
         for _if in node.ifs:
             assert isinstance(_if, If)
             if self.handle(_if.ctrl, sym_tbl):
