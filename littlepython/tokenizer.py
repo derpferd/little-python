@@ -137,15 +137,24 @@ class Tokens(object):
 
     @staticmethod
     def get_keywords(features):
-        return {
-            'if': Token(TokenTypes.IF, 'if'),
-            'elif': Token(TokenTypes.ELIF, 'elif'),
-            'else': Token(TokenTypes.ELSE, 'else'),
+        keys = {
             'not': Token(TokenTypes.NOT, 'not'),
             'is': Token(TokenTypes.EQUAL, 'is'),
             'and': Token(TokenTypes.AND, 'and'),
             'or': Token(TokenTypes.OR, 'or'),
         }
+        if Features.IF in features:
+            # TODO: write test cases that test this.
+            keys.update({
+                'if': Token(TokenTypes.IF, 'if'),
+                'else': Token(TokenTypes.ELSE, 'else'),
+            })
+        if Features.ELIF in features:
+            # TODO: write test cases that test this.
+            keys.update({
+                'elif': Token(TokenTypes.ELIF, 'elif'),
+            })
+        return keys
 
     @staticmethod
     def get_non_alpha(features):

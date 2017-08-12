@@ -1,18 +1,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from collections import defaultdict, Iterable
-import inspect
-
-counters = defaultdict(lambda: -1)
-
-
-def auto():
-    global counters
-    caller = inspect.stack()[1][3]
-    print(caller, counters[caller])
-    counters[caller] += 1
-    return 2 ** counters[caller]
+from collections import Iterable
 
 
 class Feature(object):
@@ -74,3 +63,4 @@ class Features(object):
     ELIF = feature("ELIF")
 
     ALL = IF | ELIF
+    NONE = FeatureSet([])
