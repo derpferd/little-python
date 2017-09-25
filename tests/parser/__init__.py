@@ -1,4 +1,4 @@
-from littlepython.parser import Const, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block
+from littlepython.ast import Const, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block
 from littlepython.tokenizer import Token, TokenTypes
 from tests import t
 

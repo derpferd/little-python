@@ -12,7 +12,7 @@ def auto():
     global counters
     caller = inspect.stack()[1][3]
     counters[caller] += 1
-    return 2 ** counters[caller]
+    return counters[caller]
 
 
 def alfa_(w):
@@ -31,6 +31,15 @@ def alnum_(w):
     return (w + "a").replace('_', '').isalnum()
 
 
+class classproperty(object):
+    """ @classmethod+@property """
+    def __init__(self, f):
+        self.f = classmethod(f)
+
+    def __get__(self, *a):
+        return self.f.__get__(*a)()
+
+
 class TokenTypes(Enum):
     ADD = auto()
     SUB = auto()
@@ -40,14 +49,14 @@ class TokenTypes(Enum):
     AND = auto()
     OR = auto()
     NOT = auto()
-    CONST = auto()
-    VAR = auto()
     GREATER = auto()
     GREATER_EQUAL = auto()
     LESS = auto()
     LESS_EQUAL = auto()
     EQUAL = auto()
     NOT_EQUAL = auto()
+    CONST = auto()
+    VAR = auto()
     LPAREN = auto()
     RPAREN = auto()
     LBRACE = auto()
@@ -58,6 +67,32 @@ class TokenTypes(Enum):
     ELSE = auto()
     NEW_LINE = auto()
     EOF = auto()
+
+    @classproperty
+    def BINARY_OPS(cls):
+        return {cls.ADD, cls.SUB, cls.MULT, cls.DIV, cls.MOD, cls.AND, cls.OR, cls.GREATER, cls.GREATER_EQUAL, cls.LESS,
+                cls.LESS_EQUAL, cls.EQUAL, cls.NOT_EQUAL}
+
+    @classproperty
+    def UNARY_OPS(cls):
+        return {cls.NOT}
+
+    @classproperty
+    def OPERANDS(cls):
+        return {cls.VAR, cls.CONST}
+
+    @classproperty
+    def PARENS(cls):
+        return {cls.LPAREN, cls.RPAREN}
+
+    @classmethod
+    def control(cls, features):
+        types = set()
+        if Features.IF in features:
+            types |= {TokenTypes.IF, TokenTypes.ELSE}
+        if Features.ELIF in features:
+            types |= {TokenTypes.ELIF, }
+        return types
 
     @staticmethod
     def from_str(s):

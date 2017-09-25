@@ -6,15 +6,10 @@ from littlepython.tokenizer import TokenTypes
 
 
 class Parser(object):
-    @staticmethod
-    def get_control_types(features):
-        return {TokenTypes.IF, TokenTypes.ELIF, TokenTypes.ELSE}
-
     def __init__(self, tokenizer, features=Features.ALL):
         self.tokenizer = tokenizer
         self.cur_token = next(tokenizer)
         self.features = features
-        self.control_type = self.get_control_types(features)
 
     def error(self, msg=""):
         raise Exception("Invalid syntax: " + msg)
@@ -48,7 +43,7 @@ class Parser(object):
             self.eat(TokenTypes.ASSIGN)
             right = self.expression()
             return Assign(op, left, right)
-        elif self.cur_token.type in self.control_type:
+        elif self.cur_token.type in TokenTypes.control(self.features):
             return self.control()
 
     def control(self):
@@ -90,40 +85,51 @@ class Parser(object):
         self.eat(TokenTypes.VAR)
         return var
 
+    def operand(self):
+        """
+        operand      : variable
+        operand      : const
+        """
+        if self.cur_token.type == TokenTypes.VAR:
+            return self.variable()
+        elif self.cur_token.type == TokenTypes.CONST:
+            return self.const()
+        else:
+            self.error("Excepted an operand type got {}".format(self.cur_token.type))
+
+    def const(self):
+        const = Const(self.cur_token)
+        self.eat(TokenTypes.CONST)
+        return const
+
     def expression(self):
         """This expression parser is in a different format for simplicity
         expression : expression (newline)
 
         """
-
-        # TODO: convert these to types instead of strings
-        binary_ops = ["+", "-", "*", "/", "%", "or", "and", "is", "is not", ">", "<", "<=", ">="]
-        unary_ops = ["not"]
-        operand_types = {TokenTypes.VAR: Var, TokenTypes.CONST: Const}
-        parens = (TokenTypes.LPAREN, TokenTypes.RPAREN)
-
         operator_stack = []
         operand_stack = []
 
         # TODO: convert these to types instead of strings
         def get_op_priority(op):
             # Ref: https://docs.python.org/2/reference/expressions.html
-            if op in ('or', 'and'):
+            if op.type in {TokenTypes.OR, TokenTypes.AND}:
                 return 1
-            if op in ('not',):
+            if op.type in {TokenTypes.NOT, }:
                 return 2
-            if op in ('is', 'is not', '>', '<', '<=', '>='):
+            if op.type in {TokenTypes.EQUAL, TokenTypes.NOT_EQUAL, TokenTypes.GREATER, TokenTypes.GREATER_EQUAL,
+                           TokenTypes.LESS, TokenTypes.LESS_EQUAL}:
                 return 3
-            if op in ('+', '-'):
+            if op.type in {TokenTypes.ADD, TokenTypes.SUB}:
                 return 4
-            if op in ('/', '*', "%"):
+            if op.type in {TokenTypes.DIV, TokenTypes.MULT, TokenTypes.MOD}:
                 return 5
             return -1
 
         def build_last_tree(operands, operators):
             op = operators.pop()
             b = None
-            if op.value in binary_ops:
+            if op.type in TokenTypes.BINARY_OPS:
                 b = operands.pop()
             a = operands.pop()
             if b is not None:
@@ -132,14 +138,12 @@ class Parser(object):
                 return UnaryOp(op, a)
 
         # TODO: handle negative numbers
-        while self.cur_token.value in binary_ops or self.cur_token.value in unary_ops or self.cur_token.type in operand_types or self.cur_token.type in parens:
-            if self.cur_token.type in operand_types:
-                operand = operand_types[self.cur_token.type](self.cur_token)
-                operand_stack.append(operand)
-                self.eat(self.cur_token.type)
-            elif self.cur_token.value in binary_ops or self.cur_token.value in unary_ops:
-                while operator_stack and get_op_priority(operator_stack[-1].value) > get_op_priority(
-                        self.cur_token.value):
+        while self.cur_token.type in TokenTypes.BINARY_OPS | TokenTypes.UNARY_OPS | TokenTypes.OPERANDS | TokenTypes.PARENS:
+            if self.cur_token.type in TokenTypes.OPERANDS:
+                operand_stack.append(self.operand())
+            elif self.cur_token.type in TokenTypes.BINARY_OPS or self.cur_token.type in TokenTypes.UNARY_OPS:
+                while operator_stack and get_op_priority(operator_stack[-1]) > get_op_priority(
+                        self.cur_token):
                     operand_stack.append(build_last_tree(operand_stack, operator_stack))
                 operator_stack.append(self.cur_token)
                 self.eat(self.cur_token.type)

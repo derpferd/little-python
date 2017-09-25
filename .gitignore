@@ -9,3 +9,5 @@
 
 # PyCharm Editor settings
 .idea/
+
+.cache/*
