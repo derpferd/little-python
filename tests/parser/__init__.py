@@ -1,4 +1,4 @@
-from littlepython.ast import Int, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block
+from littlepython.ast import Int, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block, GetArrayItem, SetArrayItem
 from littlepython.tokenizer import Token, TokenTypes
 from tests import t
 
@@ -90,6 +90,14 @@ def _if(expr, block):
 
 def ctrl(ifs, els):
     return ControlBlock(ifs, els)
+
+
+def getitem(l, r):
+    return GetArrayItem(l, r)
+
+
+def setitem(l, r, e):
+    return SetArrayItem(l, r, e)
 
 
 def c(v):

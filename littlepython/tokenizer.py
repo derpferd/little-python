@@ -59,11 +59,14 @@ class TokenTypes(Enum):
     VAR = auto()
 
     INT = auto()
+    ARRAY = auto()
 
     LPAREN = auto()
     RPAREN = auto()
     LBRACE = auto()
     RBRACE = auto()
+    LBRACKET = auto()
+    RBRACKET = auto()
 
     ASSIGN = auto()
     IF = auto()
@@ -98,6 +101,16 @@ class TokenTypes(Enum):
             types |= {TokenTypes.ELIF, }
         return types
 
+    @classmethod
+    def type_markers(cls, features):
+        types = set()
+        if Features.STATIC_TYPES:
+            # int type is built-in (i.e. it can't be disabled.)
+            types |= {TokenTypes.INT}
+            if Features.TYPE_ARRAY:
+                types |= {TokenTypes.ARRAY}
+        return types
+
     @staticmethod
     def from_str(s):
         return {'if': TokenTypes.IF,
@@ -122,6 +135,8 @@ class TokenTypes(Enum):
                 '}': TokenTypes.RBRACE,
                 '(': TokenTypes.LPAREN,
                 ')': TokenTypes.RPAREN,
+                '[': TokenTypes.LBRACKET,
+                ']': TokenTypes.RBRACKET,
                 '\n': TokenTypes.NEW_LINE,
                 None: TokenTypes.EOF}.get(s, None)
 
@@ -193,6 +208,10 @@ class Tokens(object):
             keys.update({
                 'elif': Token(TokenTypes.ELIF, 'elif'),
             })
+        if Features.STATIC_TYPES in features:
+            keys.update({
+                'int': Token(TokenTypes.INT, 'int'),
+            })
         return keys
 
     @staticmethod
@@ -213,6 +232,9 @@ class Tokens(object):
             '<=': Token(TokenTypes.LESS_EQUAL, '<='),
             '>=': Token(TokenTypes.GREATER_EQUAL, '>='),
         }
+        if Features.TYPE_ARRAY in features:
+            keys.update({'[': Token(TokenTypes.LBRACKET, '['),
+                         ']': Token(TokenTypes.RBRACKET, ']'), })
         return OrderedDict(sorted(list(keys.items()), key=lambda t: len(t[0]), reverse=True))
 
 

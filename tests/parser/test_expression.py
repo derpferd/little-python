@@ -1,10 +1,8 @@
 import pytest
 
-from littlepython.ast import BinaryOp, Var, Int, UnaryOp
 from littlepython.parser import Parser
-from littlepython.tokenizer import Tokenizer, Token, TokenTypes
-from tests.parser import ADD, DIV, NOT, EOF, v, c, add, _not, div, _and, sub, _or, gt, lt, mod, ge, le, mult, _is_not, \
-    _is
+from littlepython.tokenizer import Tokenizer
+from tests.parser import EOF, v, c, add, _not, div, _and, sub, _or, gt, lt, mod, ge, le, mult, _is_not, _is
 
 
 @pytest.mark.parametrize("op, op_str", [

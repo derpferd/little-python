@@ -61,6 +61,7 @@ def feature(name):
 class Features(object):
     IF = feature("IF")
     ELIF = feature("ELIF")
+    TYPE_ARRAY = feature("TYPE_ARRAY")
 
-    ALL = IF | ELIF
+    ALL = IF | ELIF | TYPE_ARRAY
     NONE = FeatureSet([])

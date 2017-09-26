@@ -1,12 +1,18 @@
 from __future__ import unicode_literals
 
+from littlepython.tokenizer import Token, TokenTypes
+
+
+def _var(n):
+    return Var(Token(TokenTypes.VAR, n))
+
 
 class AST(object):
     def __eq__(self, other):
         if type(self) != type(other):
             return False
-        standard_attrs = ["token", "left", "right", "children"]
-        for attr in standard_attrs:
+        possible_attrs = ["token", "left", "right", "children", "sig", "block", "ifs", "else_block", "ctrl", "params"]
+        for attr in possible_attrs:
             if hasattr(self, attr) != hasattr(other, attr):
                 return False
             if hasattr(self, attr) and getattr(self, attr) != getattr(other, attr):
@@ -60,6 +66,26 @@ class BinaryOp(AST):
         return "(" + str(self.left) + " " + self.token.value + " " + str(self.right) + ")"
 
 
+class FunctionSig(AST):
+    # TODO: add return value to this
+    def __init__(self, params):
+        # Params should be a list of Vars.
+        self.params = params
+
+    def __str__(self):
+        return "("+", ".join(map(str, self.params))+")"
+
+
+class Function(AST):
+    def __init__(self, sig, block):
+        assert isinstance(sig, FunctionSig)
+        self.sig = sig
+        self.block = block
+
+    def __str__(self):
+        return " ".join(map(str, ("func", self.sig, self.block)))
+
+
 class Assign(AST):
     def __init__(self, op, left, right):
         assert isinstance(left, Var)
@@ -86,11 +112,6 @@ class If(AST):
         self.ctrl = ctrl
         self.block = block
 
-    def __eq__(self, other):
-        if not super(If, self).__eq__(other):
-            return False
-        return self.ctrl == other.ctrl and self.block == other.block
-
     def __str__(self):
         return "if " + str(self.ctrl) + " " + str(self.block)
 
@@ -104,14 +125,33 @@ class ControlBlock(AST):
         self.ifs = ifs
         self.else_block = else_block
 
-    def __eq__(self, other):
-        if not super(ControlBlock, self).__eq__(other):
-            return False
-        return self.ifs == other.ifs and self.else_block == other.else_block
-
     def __str__(self):
         s = "if " + str(self.ifs[0].ctrl) + " " + str(self.ifs[0].block)
         for _if in self.ifs[1:]:
             s += " elif " + str(_if.ctrl) + " " + str(_if.block)
         s += " else " + str(self.else_block)
         return s
+
+
+# Built-in functions
+class GetArrayItem(Function):
+    def __init__(self, left, right):
+        sig = FunctionSig((_var("index"),))
+        super(GetArrayItem, self).__init__(sig, Block())
+        self.left = left
+        self.right = right
+
+    def __str__(self):
+        return str(self.left) + "[" + str(self.right) + "]"
+
+
+class SetArrayItem(Function):
+    def __init__(self, left, right, expr):
+        sig = FunctionSig((_var("index"), _var("value")))
+        super(SetArrayItem, self).__init__(sig, Block())
+        self.left = left
+        self.right = right
+        self.expr = expr
+
+    def __str__(self):
+        return str(self.left) + "[" + str(self.right) + "] = " + str(self.expr)

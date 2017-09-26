@@ -51,18 +51,18 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
-    # def test_op_negative_const(self):
-    #     beginning_state = {}
-    #     code = """a = -1
-    #     b = -3
-    #     c = a + b"""
-    #     expected_state = {"c": -4, "a": -1, "b": -3}
-    #
-    #     # compile code into LPProg
-    #     prog = self.compiler.compile(code)
-    #
-    #     ending_state = prog.run(beginning_state)
-    #     self.assertEqual(expected_state, ending_state)
+    def test_op_negative_const(self):
+        beginning_state = {}
+        code = """a = -1
+        b = -3
+        c = a + b"""
+        expected_state = {"c": -4, "a": -1, "b": -3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
 
     def test_op_minus_positive(self):
         beginning_state = {}
@@ -767,3 +767,104 @@ class TestLPComplierMethods(TestCase):
 
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
+
+    def test_array_access(self):
+        beginning_state = {"a": [1, 2, 3]}
+        code = """if a[0] is 1 {
+         b= 2
+        }"""
+        expected_state = {"a": [1, 2, 3], "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_array_modify(self):
+        beginning_state = {"a": [1, 2, 3]}
+        code = """a[0] = 3 + 4"""
+        expected_state = {"a": [7, 2, 3]}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_array_access_undefined(self):
+        beginning_state = {"a": [1, 2, 3]}
+        code = """if a[50] {
+         b= 2
+        }"""
+        expected_state = {"a": [1, 2, 3]}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_array_access_undefined_2(self):
+        beginning_state = {"a": [1, 2, 3]}
+        code = """if a[50] is 0 {
+         b= 2
+        }"""
+        expected_state = {"a": [1, 2, 3], "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_array_access_expr(self):
+        beginning_state = {"a": [1, 2, 3]}
+        code = """c = 2 +1 -1
+        if a[c+2-1-1] is 3 {
+         b= 2
+        }"""
+        expected_state = {"a": [1, 2, 3], "b": 2, "c": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_array_modify_expr(self):
+        beginning_state = {"a": [1, 2, 3]}
+        code = """c = 2 +1 -1
+        a[c+2-1-1] = 3 + 4"""
+        expected_state = {"a": [1, 2, 7], "c": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_2d_array_access(self):
+        beginning_state = {"a": [[1, 4], [2, 7], [3, 5]]}
+        code = """if a[0][0] is 1 {
+         b= 2
+        }"""
+        expected_state = {"a": [[1, 4], [2, 7], [3, 5]], "b": 2}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_2d_array_modify(self):
+        beginning_state = {"a": [[1, 4], [2, 7], [3, 5]]}
+        code = """a[1][0] = 4 + 4"""
+        expected_state = {"a": [[1, 4], [8, 7], [3, 5]]}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+

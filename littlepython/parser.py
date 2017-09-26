@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int
+from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int, GetArrayItem, SetArrayItem
 from littlepython.feature import Features
 from littlepython.tokenizer import TokenTypes
 
@@ -36,13 +36,19 @@ class Parser(object):
         statement   : variable ASSIGN expression
                     | control
                     | empty
+        Feature Type Array adds:
+                    | variable SETITEM expression
         """
         if self.cur_token.type == TokenTypes.VAR:
             left = self.variable()
             op = self.cur_token
             self.eat(TokenTypes.ASSIGN)
             right = self.expression()
-            return Assign(op, left, right)
+            if Features.TYPE_ARRAY in self.features and isinstance(left, GetArrayItem):
+                # Remake this as a setitem.
+                return SetArrayItem(left.left, left.right, right)
+            else:
+                return Assign(op, left, right)
         elif self.cur_token.type in TokenTypes.control(self.features):
             return self.control()
 
@@ -81,8 +87,20 @@ class Parser(object):
         return Block(statements)
 
     def variable(self):
+        """
+        variable    : variable
+        Feature Type Array adds:
+        variable    : variable[expression]
+        """
         var = Var(self.cur_token)
         self.eat(TokenTypes.VAR)
+        if Features.TYPE_ARRAY in self.features:
+            while self.cur_token.type == TokenTypes.LBRACKET:
+                self.eat(TokenTypes.LBRACKET)
+                # Start passed the logical ops.
+                expr = self.operator_expression(level=2)
+                self.eat(TokenTypes.RBRACKET)
+                var = GetArrayItem(left=var, right=expr)
         return var
 
     def expression(self):
@@ -138,7 +156,7 @@ class Parser(object):
             self.eat(TokenTypes.RPAREN)
             return node
         elif token.type == TokenTypes.VAR:
-            self.eat(TokenTypes.VAR)
-            return Var(token)
+            # self.eat(TokenTypes.VAR)
+            return self.variable()
         else:
             self.error("Excepted a factor type got {}".format(self.cur_token.type))

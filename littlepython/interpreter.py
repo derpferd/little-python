@@ -4,8 +4,20 @@ from __future__ import unicode_literals
 
 from copy import copy
 
+from collections import defaultdict
+
+from littlepython.ast import SetArrayItem, GetArrayItem
 from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
 
+
+def defaultdict_to_list(d):
+    valid_keys = [x for x in d.keys() if d[x] != 0]
+    length = max(valid_keys)+1
+    l = [0]*length
+    for k, v in d.items():
+        if v != 0:
+            l[k] = v
+    return l
 
 class SymbolTable(object):
     def resolve(self, name):
@@ -51,7 +63,9 @@ class LPProg(object):
                  ">": lambda a, b: a > b,
                  "<=": lambda a, b: a <= b,
                  ">=": lambda a, b: a >= b}
-    unaryOps = {"not": lambda a: not a}
+    unaryOps = {"not": lambda a: not a,
+                "+": lambda a: a,
+                "-": lambda a: -a}
 
     def __init__(self, ast):
         self.ast = ast
@@ -88,6 +102,16 @@ class LPProg(object):
         assert isinstance(node, UnaryOp)
         return self.unaryOps[node.op.value](self.handle(node.right, sym_tbl))
 
+    def handle_getarrayitem(self, node, sym_tbl):
+        assert isinstance(node, GetArrayItem)
+        var = self.handle(node.left, sym_tbl)
+        return var[self.handle(node.right, sym_tbl)]
+
+    def handle_setarrayitem(self, node, sym_tbl):
+        assert isinstance(node, SetArrayItem)
+        var = self.handle(node.left, sym_tbl)
+        var[self.handle(node.right, sym_tbl)] = self.handle(node.expr, sym_tbl)
+
     def handle(self, node, sym_tbl):
         name = 'handle_' + type(node).__name__.lower()
         handler = getattr(self, name, None)
@@ -98,7 +122,21 @@ class LPProg(object):
     def run(self, static_vars=None):
         state = {}
         if static_vars is not None:
-            state = copy(static_vars)
+            for key, var in static_vars.items():
+                if isinstance(var, list):
+                    new_list = defaultdict(int)
+                    for i, v in enumerate(var):
+                        new_list[i] = v
+                    state[key] = new_list
+                else:
+                    state[key] = copy(var)
         sym_tbl = GlobalSymbolTable(state)
         self.handle(self.ast, sym_tbl)
-        return sym_tbl.dump_cur_state()
+        end_state = {}
+        for key, var in sym_tbl.dump_cur_state().items():
+            if isinstance(var, defaultdict):
+                end_state[key] = defaultdict_to_list(var)
+            else:
+                end_state[key] = var
+
+        return end_state
