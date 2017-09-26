@@ -85,85 +85,60 @@ class Parser(object):
         self.eat(TokenTypes.VAR)
         return var
 
-    def operand(self):
-        """
-        operand      : variable
-        operand      : const
-        """
-        if self.cur_token.type == TokenTypes.VAR:
-            return self.variable()
-        elif self.cur_token.type in TokenTypes.OPERANDS:
-            # Any thing that is an operand that is not a variable is a const.
-            return self.const()
-        else:
-            self.error("Excepted an operand type got {}".format(self.cur_token.type))
-
-    def const(self):
-        const = None
-        if self.cur_token.type == TokenTypes.INT:
-            const = Int(self.cur_token)
-            self.eat(TokenTypes.INT)
-        else:
-            self.error("Excepted a const type got {}".format(self.cur_token.type))
-        return const
-
     def expression(self):
-        """This expression parser is in a different format for simplicity
-        expression : expression (newline)
-
-        """
-        operator_stack = []
-        operand_stack = []
-
-        def get_op_priority(op):
-            # Ref: https://docs.python.org/2/reference/expressions.html
-            if op.type in {TokenTypes.OR, TokenTypes.AND}:
-                return 1
-            if op.type in {TokenTypes.NOT, }:
-                return 2
-            if op.type in {TokenTypes.EQUAL, TokenTypes.NOT_EQUAL, TokenTypes.GREATER, TokenTypes.GREATER_EQUAL,
-                           TokenTypes.LESS, TokenTypes.LESS_EQUAL}:
-                return 3
-            if op.type in {TokenTypes.ADD, TokenTypes.SUB}:
-                return 4
-            if op.type in {TokenTypes.DIV, TokenTypes.MULT, TokenTypes.MOD}:
-                return 5
-            return -1
-
-        def build_last_tree(operands, operators):
-            op = operators.pop()
-            b = None
-            if op.type in TokenTypes.BINARY_OPS:
-                b = operands.pop()
-            a = operands.pop()
-            if b is not None:
-                return BinaryOp(op, a, b)
-            else:
-                return UnaryOp(op, a)
-
-        # TODO: handle negative numbers
-        while self.cur_token.type in TokenTypes.BINARY_OPS | TokenTypes.UNARY_OPS | TokenTypes.OPERANDS | TokenTypes.PARENS:
-            if self.cur_token.type in TokenTypes.OPERANDS:
-                operand_stack.append(self.operand())
-            elif self.cur_token.type in TokenTypes.BINARY_OPS or self.cur_token.type in TokenTypes.UNARY_OPS:
-                while operator_stack and get_op_priority(operator_stack[-1]) > get_op_priority(
-                        self.cur_token):
-                    operand_stack.append(build_last_tree(operand_stack, operator_stack))
-                operator_stack.append(self.cur_token)
-                self.eat(self.cur_token.type)
-            elif self.cur_token.type == TokenTypes.LPAREN:
-                operator_stack.append(self.cur_token)
-                self.eat(TokenTypes.LPAREN)
-            elif self.cur_token.type == TokenTypes.RPAREN:
-                op = self.cur_token
-                while op.type != TokenTypes.LPAREN:
-                    ast = build_last_tree(operand_stack, operator_stack)
-                    op = operator_stack[-1]
-                    operand_stack.append(ast)
-                operator_stack.pop()  # remove the LPAREN we ran into.
-                self.eat(TokenTypes.RPAREN)
-        while operator_stack:
-            operand_stack.append(build_last_tree(operand_stack, operator_stack))
+        node = self.operator_expression()
         if self.cur_token.type == TokenTypes.NEW_LINE:
             self.eat(TokenTypes.NEW_LINE)
-        return operand_stack[0]
+        return node
+
+    def operator_expression(self, level=0):
+        levels = ({TokenTypes.OR, TokenTypes.AND},
+                  {TokenTypes.NOT},
+                  {TokenTypes.EQUAL, TokenTypes.NOT_EQUAL, TokenTypes.GREATER, TokenTypes.GREATER_EQUAL, TokenTypes.LESS, TokenTypes.LESS_EQUAL},
+                  {TokenTypes.ADD, TokenTypes.SUB},
+                  {TokenTypes.DIV, TokenTypes.MULT, TokenTypes.MOD})
+
+        # If out of level then grab factor instead.
+        if level >= len(levels):
+            return self.factor()
+
+        if next(iter(levels[level])) in TokenTypes.BINARY_OPS:
+            node = self.operator_expression(level+1)
+        else:
+            node = None
+
+        while self.cur_token.type in levels[level]:
+            token = self.cur_token
+            self.eat(token.type)
+
+            if token.type in TokenTypes.BINARY_OPS:
+                node = BinaryOp(op=token, left=node, right=self.operator_expression(level+1))
+            if token.type in TokenTypes.UNARY_OPS:
+                node = UnaryOp(op=token, right=self.operator_expression(level+1))
+
+        if node is None:
+            node = self.operator_expression(level+1)
+
+        return node
+
+    def factor(self):
+        token = self.cur_token
+        if token.type == TokenTypes.ADD:
+            self.eat(TokenTypes.ADD)
+            return UnaryOp(token, self.factor())
+        elif token.type == TokenTypes.SUB:
+            self.eat(TokenTypes.SUB)
+            return UnaryOp(token, self.factor())
+        elif token.type == TokenTypes.INT:
+            self.eat(TokenTypes.INT)
+            return Int(token)
+        elif token.type == TokenTypes.LPAREN:
+            self.eat(TokenTypes.LPAREN)
+            node = self.expression()
+            self.eat(TokenTypes.RPAREN)
+            return node
+        elif token.type == TokenTypes.VAR:
+            self.eat(TokenTypes.VAR)
+            return Var(token)
+        else:
+            self.error("Excepted a factor type got {}".format(self.cur_token.type))

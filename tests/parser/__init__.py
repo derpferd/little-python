@@ -8,17 +8,22 @@ from tests import t
 
 
 ADD = Token(TokenTypes.ADD, "+")
+SUB = Token(TokenTypes.SUB, "-")
 DIV = Token(TokenTypes.DIV, "/")
 NOT = Token(TokenTypes.NOT, "not")
 EOF = Token(TokenTypes.EOF, None)
 
 
-def add(l, r):
-    return BinaryOp(ADD, l, r)
+def add(l, r=None):
+    if r:
+        return BinaryOp(ADD, l, r)
+    return UnaryOp(ADD, l)
 
 
-def sub(l, r):
-    return BinaryOp(Token(TokenTypes.SUB, "-"), l, r)
+def sub(l, r=None):
+    if r:
+        return BinaryOp(SUB, l, r)
+    return UnaryOp(SUB, l)
 
 
 def mult(l, r):
