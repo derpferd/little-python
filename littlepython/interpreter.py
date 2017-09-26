@@ -19,6 +19,15 @@ def defaultdict_to_list(d):
             l[k] = v
     return l
 
+
+class AlreadyRunningException(Exception):
+    pass
+
+
+class ExecutionCountExceededException(Exception):
+    pass
+
+
 class SymbolTable(object):
     def resolve(self, name):
         raise NotImplementedError("Must be implemented")
@@ -49,6 +58,7 @@ class GlobalSymbolTable(SymbolTable):
 
 
 class LPProg(object):
+    # TODO: allow multithreaded execution.
     binaryOps = {"+": lambda a, b: a + b,
                  "-": lambda a, b: a - b,
                  "*": lambda a, b: a * b,
@@ -69,6 +79,8 @@ class LPProg(object):
 
     def __init__(self, ast):
         self.ast = ast
+        self.running = False
+        self.count_remaining = -1
 
     def handle_var(self, node, sym_tbl):
         return sym_tbl[node.value]
@@ -113,13 +125,20 @@ class LPProg(object):
         var[self.handle(node.right, sym_tbl)] = self.handle(node.expr, sym_tbl)
 
     def handle(self, node, sym_tbl):
+        self.count_remaining -= 1
+        if self.count_remaining == 0:
+            raise ExecutionCountExceededException("Running this program would require more operations than allowed.")
         name = 'handle_' + type(node).__name__.lower()
         handler = getattr(self, name, None)
         if handler is None:
             raise NotImplementedError("No {} found.".format(name))
         return handler(node, sym_tbl)
 
-    def run(self, static_vars=None):
+    def run(self, static_vars=None, max_op_count=-1):
+        if self.running:
+            raise AlreadyRunningException("This program can only be run on one thread. And this one is already running.")
+        self.running = True
+        self.count_remaining = max_op_count
         state = {}
         if static_vars is not None:
             for key, var in static_vars.items():
@@ -139,4 +158,5 @@ class LPProg(object):
             else:
                 end_state[key] = var
 
+        self.running = False
         return end_state

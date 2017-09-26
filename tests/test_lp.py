@@ -3,6 +3,7 @@
 
 from unittest import TestCase
 
+from littlepython.interpreter import ExecutionCountExceededException
 from littlepython.lp import Compiler
 
 
@@ -868,3 +869,14 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_execution_count_exceeded(self):
+        code = """a = 1\na = 1\na = 1\na = 1\na = 1\na = 1\na = 1\na = 1\n"""
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        try:
+            ending_state = prog.run(max_op_count=3)
+        except ExecutionCountExceededException:
+            return
+        self.fail("Should have thrown an exception.")
