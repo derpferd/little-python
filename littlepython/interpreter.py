@@ -59,7 +59,7 @@ class LPProg(object):
     def handle_var(self, node, sym_tbl):
         return sym_tbl[node.value]
 
-    def handle_const(self, node, sym_tbl):
+    def handle_int(self, node, sym_tbl):
         return node.value
 
     def handle_assign(self, node, sym_tbl):

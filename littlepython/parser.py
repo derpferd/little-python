@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Const
+from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int
 from littlepython.feature import Features
 from littlepython.tokenizer import TokenTypes
 
@@ -92,14 +92,19 @@ class Parser(object):
         """
         if self.cur_token.type == TokenTypes.VAR:
             return self.variable()
-        elif self.cur_token.type == TokenTypes.CONST:
+        elif self.cur_token.type in TokenTypes.OPERANDS:
+            # Any thing that is an operand that is not a variable is a const.
             return self.const()
         else:
             self.error("Excepted an operand type got {}".format(self.cur_token.type))
 
     def const(self):
-        const = Const(self.cur_token)
-        self.eat(TokenTypes.CONST)
+        const = None
+        if self.cur_token.type == TokenTypes.INT:
+            const = Int(self.cur_token)
+            self.eat(TokenTypes.INT)
+        else:
+            self.error("Excepted a const type got {}".format(self.cur_token.type))
         return const
 
     def expression(self):
@@ -110,7 +115,6 @@ class Parser(object):
         operator_stack = []
         operand_stack = []
 
-        # TODO: convert these to types instead of strings
         def get_op_priority(op):
             # Ref: https://docs.python.org/2/reference/expressions.html
             if op.type in {TokenTypes.OR, TokenTypes.AND}:

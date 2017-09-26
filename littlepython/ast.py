@@ -23,7 +23,16 @@ class AST(object):
         return self.__str__()
 
 
-class Const(AST):
+class Type(AST):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+    def __str__(self):
+        return str(self.value)
+
+
+class Int(AST):
     def __init__(self, token):
         self.token = token
         self.value = token.value
@@ -33,9 +42,11 @@ class Const(AST):
 
 
 class Var(AST):
-    def __init__(self, token):
+    # TODO: implement type
+    def __init__(self, token, type=None):
         self.token = token
         self.value = token.value
+        self.type = type
 
     def __str__(self):
         return str(self.value)

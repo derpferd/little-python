@@ -465,6 +465,50 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_if_with_var_undefined(self):
+        beginning_state = {}
+        code = """
+        if a is 0 {
+            c = 5
+        }"""
+        expected_state = {"c": 5}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_if_with_var_undefined_2(self):
+        beginning_state = {}
+        code = """
+        if a {
+            c = 2
+        } else {
+            c = 5
+        }"""
+        expected_state = {"c": 5}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_if_with_var_undefined_3(self):
+        beginning_state = {}
+        code = """
+        if not a {
+            c = 5
+        }"""
+        expected_state = {"c": 5}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
     def test_nested_if(self):
             beginning_state = {}
             code = """if 0 is 0 {

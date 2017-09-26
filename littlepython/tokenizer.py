@@ -55,12 +55,16 @@ class TokenTypes(Enum):
     LESS_EQUAL = auto()
     EQUAL = auto()
     NOT_EQUAL = auto()
-    CONST = auto()
+
     VAR = auto()
+
+    INT = auto()
+
     LPAREN = auto()
     RPAREN = auto()
     LBRACE = auto()
     RBRACE = auto()
+
     ASSIGN = auto()
     IF = auto()
     ELIF = auto()
@@ -79,7 +83,7 @@ class TokenTypes(Enum):
 
     @classproperty
     def OPERANDS(cls):
-        return {cls.VAR, cls.CONST}
+        return {cls.VAR, cls.INT}
 
     @classproperty
     def PARENS(cls):
@@ -109,15 +113,15 @@ class TokenTypes(Enum):
                 '*': TokenTypes.MULT,
                 '/': TokenTypes.DIV,
                 '%': TokenTypes.MOD,
+                '=': TokenTypes.ASSIGN,
                 '<': TokenTypes.LESS,
                 '>': TokenTypes.GREATER,
+                '<=': TokenTypes.LESS_EQUAL,
+                '>=': TokenTypes.GREATER_EQUAL,
                 '{': TokenTypes.LBRACE,
                 '}': TokenTypes.RBRACE,
                 '(': TokenTypes.LPAREN,
                 ')': TokenTypes.RPAREN,
-                '=': TokenTypes.ASSIGN,
-                '<=': TokenTypes.LESS_EQUAL,
-                '>=': TokenTypes.GREATER_EQUAL,
                 '\n': TokenTypes.NEW_LINE,
                 None: TokenTypes.EOF}.get(s, None)
 
@@ -146,7 +150,7 @@ class Token(object):
         if token_type:
             return Token(token_type, s)
         if isinstance(s, str) and s.isdigit() or isinstance(s, int):
-            return Token(TokenTypes.CONST, int(s))
+            return Token(TokenTypes.INT, int(s))
         if isinstance(s, str) and len(s) and alfa_(s[0]) and alnum_(s[1:]):
             return Token(TokenTypes.VAR, s)
         raise ValueError("Invalid input")
@@ -263,12 +267,13 @@ class Tokenizer(object):
             self.advance()
 
     def number(self):
+        # TODO: some time in the future add floats here too.
         result = ""
         while self.cur_char is not None and self.cur_char.isdigit():
             result += self.cur_char
             self.advance()
 
-        return Token(TokenTypes.CONST, int(result))
+        return Token(TokenTypes.INT, int(result))
 
     def id(self):
         result = ""

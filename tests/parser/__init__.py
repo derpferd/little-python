@@ -1,4 +1,4 @@
-from littlepython.ast import Const, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block
+from littlepython.ast import Int, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block
 from littlepython.tokenizer import Token, TokenTypes
 from tests import t
 
@@ -88,7 +88,7 @@ def ctrl(ifs, els):
 
 
 def c(v):
-    return Const(Token(TokenTypes.CONST, v))
+    return Int(Token(TokenTypes.INT, v))
 
 
 def v(n):
