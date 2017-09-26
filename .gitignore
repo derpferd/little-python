@@ -11,3 +11,4 @@
 .idea/
 
 .cache/*
+.eggs/*

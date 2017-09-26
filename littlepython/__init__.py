@@ -4,4 +4,4 @@ from .lp import Compiler
 from .feature import Features
 
 __all__ = ["Compiler", "Features"]
-version = '0.2.1'
+version = '0.3.0'
