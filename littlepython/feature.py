@@ -62,6 +62,7 @@ class Features(object):
     IF = feature("IF")
     ELIF = feature("ELIF")
     TYPE_ARRAY = feature("TYPE_ARRAY")
+    RANDOM_VAR = feature("RANDOM_VAR")
 
-    ALL = IF | ELIF | TYPE_ARRAY
+    ALL = IF | ELIF | TYPE_ARRAY | RANDOM_VAR
     NONE = FeatureSet([])

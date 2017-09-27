@@ -8,6 +8,7 @@ from collections import defaultdict
 
 from littlepython.ast import SetArrayItem, GetArrayItem
 from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
+from littlepython.feature import Features
 
 
 def defaultdict_to_list(d):
@@ -77,12 +78,16 @@ class LPProg(object):
                 "+": lambda a: a,
                 "-": lambda a: -a}
 
-    def __init__(self, ast):
+    def __init__(self, ast, features):
         self.ast = ast
+        self.features = features
         self.running = False
         self.count_remaining = -1
 
     def handle_var(self, node, sym_tbl):
+        if node.value == "rand" and Features.RANDOM_VAR in self.features:
+            from random import randint
+            return randint(-2147483647, 2147483647)
         return sym_tbl[node.value]
 
     def handle_int(self, node, sym_tbl):

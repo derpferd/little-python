@@ -17,4 +17,4 @@ class Compiler(object):
         Returns:
             LPProg
         """
-        return LPProg(Parser(Tokenizer(prog, features), features).program())
+        return LPProg(Parser(Tokenizer(prog, features), features).program(), features)
