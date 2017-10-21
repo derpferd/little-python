@@ -101,16 +101,6 @@ class TokenTypes(Enum):
             types |= {TokenTypes.ELIF, }
         return types
 
-    @classmethod
-    def type_markers(cls, features):
-        types = set()
-        if Features.STATIC_TYPES:
-            # int type is built-in (i.e. it can't be disabled.)
-            types |= {TokenTypes.INT}
-            if Features.TYPE_ARRAY:
-                types |= {TokenTypes.ARRAY}
-        return types
-
     @staticmethod
     def from_str(s):
         return {'if': TokenTypes.IF,
@@ -207,10 +197,6 @@ class Tokens(object):
             # TODO: write test cases that test this.
             keys.update({
                 'elif': Token(TokenTypes.ELIF, 'elif'),
-            })
-        if Features.STATIC_TYPES in features:
-            keys.update({
-                'int': Token(TokenTypes.INT, 'int'),
             })
         return keys
 
