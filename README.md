@@ -1,4 +1,7 @@
 # Little Python
+
+[![Build Status](https://travis-ci.org/DerPferd/little-python.svg?branch=master)](https://travis-ci.org/DerPferd/little-python)
+
 *A Super Simplified Python with a Little Syntactic Sugar*
 
 *MIT License*
@@ -16,6 +19,19 @@ Run this following command to install from PyPI.
 Run ```pip install -e .``` to install the package locally using sym links so changes to the code in the repo will be reflected globally.
 To run all the tests run ```python setup.py test```.
 
+### Todo
+*This list has been moved to Issues instead*
+- [ ] Add better metadata to setup.py
+- [ ] Add negative constant numbers
+- [ ] Add arrays
+- [ ] Add functions
+- [ ] Add scoping
+- [ ] Get to and stay at 100% code coverage.
+   - Currently at 95% for interpreter.py and 91% for parser.py
+   - Most of the uncovered code are edge cases, therefore we need more test cases.
+
+
+## Warning the following was created for version 0.1
 
 ### Design Thoughts
 > Data Types
@@ -99,13 +115,3 @@ This could become a feature in the future
 > - Parse script into Abstract Syntax Tree. (This is where all syntax error will be caught)
 > - Reduce Abstract Syntax Tree.
 > - Execute Abstract Syntax Tree with arguments.
- 
-### Todo
- - Add better metadata to setup.py
- - Add negative constant numbers
- - Add arrays
- - Add functions
- - Add scoping
- - Get to and stay at 100% code coverage.
-   - Currently at 95% for interpreter.py and 91% for parser.py
-   - Most of the uncovered code are edge cases, therefore we need more test cases.
