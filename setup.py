@@ -1,10 +1,18 @@
 from setuptools import setup
-from littlepython import version
+from distutils.util import convert_path
 
 # TODO: add better metadata https://python-packaging.readthedocs.io/en/latest/metadata.html
 
+# Hack to get around version dependency problems
+# Taken from: https://stackoverflow.com/a/24517154
+main_ns = {}
+ver_path = convert_path('littlepython/version.py')
+with open(ver_path) as ver_file:
+    exec(ver_file.read(), main_ns)
+
+
 setup(name='littlepython',
-      version=version,
+      version=main_ns["version"],
       description='A Super Simplified Python with a Little Syntactic Sugar',
       url='https://github.com/DerPferd/little-python',
       author='Jonathan Beaulieu',
