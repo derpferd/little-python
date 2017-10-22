@@ -41,6 +41,7 @@ class classproperty(object):
 
 
 class TokenTypes(Enum):
+    # Basic Ops
     ADD = auto()
     SUB = auto()
     MULT = auto()
@@ -56,11 +57,11 @@ class TokenTypes(Enum):
     EQUAL = auto()
     NOT_EQUAL = auto()
 
-    VAR = auto()
-
+    # types
     INT = auto()
     ARRAY = auto()
 
+    # Grouping tokens
     LPAREN = auto()
     RPAREN = auto()
     LBRACE = auto()
@@ -68,12 +69,18 @@ class TokenTypes(Enum):
     LBRACKET = auto()
     RBRACKET = auto()
 
+    # control
     ASSIGN = auto()
     IF = auto()
     ELIF = auto()
     ELSE = auto()
+
+    # Whitespace
     NEW_LINE = auto()
     EOF = auto()
+
+    # Other
+    VAR = auto()
 
     @classproperty
     def BINARY_OPS(cls):
@@ -98,7 +105,7 @@ class TokenTypes(Enum):
         if Features.IF in features:
             types |= {TokenTypes.IF, TokenTypes.ELSE}
         if Features.ELIF in features:
-            types |= {TokenTypes.ELIF, }
+            types |= {TokenTypes.ELIF}
         return types
 
     @staticmethod

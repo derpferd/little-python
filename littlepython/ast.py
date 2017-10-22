@@ -63,7 +63,19 @@ class BinaryOp(AST):
         self.right = right
 
     def __str__(self):
-        return "(" + str(self.left) + " " + self.token.value + " " + str(self.right) + ")"
+        # TODO: create better to string.
+        s = ""
+        if isinstance(self.left, BinaryOp):
+            s += "(" + str(self.left) + ")"
+        else:
+            s += str(self.left)
+        s += " " + self.token.value + " "
+        if isinstance(self.right, BinaryOp):
+            s += "(" + str(self.right) + ")"
+        else:
+            s += str(self.right)
+        # s += ")"
+        return s
 
 
 class FunctionSig(AST):
@@ -94,7 +106,7 @@ class Assign(AST):
         self.right = right
 
     def __str__(self):
-        return str(self.left) + " " + self.token.value + " " + str(self.right) + "\n"
+        return str(self.left) + " " + self.token.value + " " + str(self.right)
 
 
 class Block(AST):
@@ -104,7 +116,7 @@ class Block(AST):
         self.children = children
 
     def __str__(self):
-        return "{\n" + "".join(map(str, self.children)) + "}"
+        return "{\n" + "\n".join(map(str, self.children)) + "\n}"
 
 
 class If(AST):
