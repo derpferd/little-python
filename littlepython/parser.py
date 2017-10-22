@@ -33,24 +33,34 @@ class Parser(object):
 
     def statement(self):
         """
-        statement   : variable ASSIGN expression
+        statement   : assign statement
                     | control
                     | empty
-        Feature Type Array adds:
-                    | variable SETITEM expression
         """
         if self.cur_token.type == TokenTypes.VAR:
-            left = self.variable()
-            op = self.cur_token
-            self.eat(TokenTypes.ASSIGN)
-            right = self.expression()
-            if Features.TYPE_ARRAY in self.features and isinstance(left, GetArrayItem):
-                # Remake this as a setitem.
-                return SetArrayItem(left.left, left.right, right)
-            else:
-                return Assign(op, left, right)
+            return self.assign_statement()
         elif self.cur_token.type in TokenTypes.control(self.features):
             return self.control()
+
+    def assign_statement(self):
+        """
+        assign smt  : variable ASSIGN expression(;)
+        Feature Type Array adds:
+                    | variable SETITEM expression(;)
+        """
+        left = self.variable()
+        op = self.cur_token
+        self.eat(TokenTypes.ASSIGN)
+        right = self.expression()
+        smt = None
+        if Features.TYPE_ARRAY in self.features and isinstance(left, GetArrayItem):
+            # Remake this as a setitem.
+            smt = SetArrayItem(left.left, left.right, right)
+        else:
+            smt = Assign(op, left, right)
+        if self.cur_token.type == TokenTypes.SEMI_COLON:
+            self.eat(TokenTypes.SEMI_COLON)
+        return smt
 
     def control(self):
         """
