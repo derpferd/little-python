@@ -77,6 +77,7 @@ class TokenTypes(Enum):
 
     # Whitespace
     NEW_LINE = auto()
+    SEMI_COLON = auto()
     EOF = auto()
 
     # Other
@@ -134,6 +135,7 @@ class TokenTypes(Enum):
                 ')': TokenTypes.RPAREN,
                 '[': TokenTypes.LBRACKET,
                 ']': TokenTypes.RBRACKET,
+                ';': TokenTypes.SEMI_COLON,
                 '\n': TokenTypes.NEW_LINE,
                 None: TokenTypes.EOF}.get(s, None)
 
@@ -222,6 +224,7 @@ class Tokens(object):
             '(': Token(TokenTypes.LPAREN, '('),
             ')': Token(TokenTypes.RPAREN, ')'),
             '=': Token(TokenTypes.ASSIGN, '='),
+            ';': Token(TokenTypes.SEMI_COLON, ';'),
             '<=': Token(TokenTypes.LESS_EQUAL, '<='),
             '>=': Token(TokenTypes.GREATER_EQUAL, '>='),
         }
