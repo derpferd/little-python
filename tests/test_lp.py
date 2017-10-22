@@ -869,6 +869,39 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_for_loop(self):
+        beginning_state = {}
+        code = """for i=0; i < 10; i = i + 1 {a = a + 1}"""
+        expected_state = {"a": 10, "i": 10}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_for_loop_array_set(self):
+        beginning_state = {"a": []}
+        code = """for i=0; i < 10; i = i + 1 {a[i] = i}"""
+        expected_state = {"a": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "i": 10}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_for_loop_array_get_and_set(self):
+        beginning_state = {"a": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+        code = """for i=0; i < 10; i = i + 1 {a[i] = a[i] + 2}"""
+        expected_state = {"a": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "i": 10}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
     def test_execution_count_exceeded(self):
         code = """a = 1\na = 1\na = 1\na = 1\na = 1\na = 1\na = 1\na = 1\n"""
 

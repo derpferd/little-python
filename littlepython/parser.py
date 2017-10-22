@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
-from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int, GetArrayItem, SetArrayItem
+from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int, GetArrayItem, SetArrayItem, \
+    ForLoop
 from littlepython.feature import Features
 from littlepython.tokenizer import TokenTypes
 
@@ -36,11 +37,15 @@ class Parser(object):
         statement   : assign statement
                     | control
                     | empty
+        Feature For Loop adds:
+                    | loop
         """
         if self.cur_token.type == TokenTypes.VAR:
             return self.assign_statement()
         elif self.cur_token.type in TokenTypes.control(self.features):
             return self.control()
+        elif self.cur_token.type in TokenTypes.loop(self.features):
+            return self.loop()
 
     def assign_statement(self):
         """
@@ -80,6 +85,18 @@ class Parser(object):
             self.eat(TokenTypes.ELSE)
             else_block = self.block()
         return ControlBlock(ifs, else_block)
+
+    def loop(self):
+        """
+        loop    : 'for' init; ctrl; inc block
+        """
+        self.eat(TokenTypes.FOR_LOOP)
+        init = self.assign_statement()
+        ctrl = self.expression()
+        self.eat(TokenTypes.SEMI_COLON)
+        inc = self.assign_statement()
+        block = self.block()
+        return ForLoop(init, ctrl, inc, block)
 
     def block(self):
         """

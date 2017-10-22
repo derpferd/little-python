@@ -47,3 +47,18 @@ def test_array_enabled():
     tokens = [t("["), t("]"), t("["), t("]")]
     for token in tokens:
         assert tokenizer.get_next_token() == token
+
+
+def test_for_loop_disabled():
+    tokenizer = Tokenizer("for", Features.NONE)
+    tokens = [t("for")]
+    for token in tokens:
+        assert tokenizer.get_next_token() != token
+
+
+def test_for_loop_enabled():
+    tokenizer = Tokenizer("for", Features.FOR_LOOP)
+    tokens = [t("for")]
+    for token in tokens:
+        assert tokenizer.get_next_token() == token
+

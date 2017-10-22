@@ -1,6 +1,6 @@
 import pytest
 
-from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST
+from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST, ForLoop
 from tests import t
 
 
@@ -57,3 +57,11 @@ def test_control_block_str():
                          If(BinaryOp(t("<"), Int(t("1")), Var(t("a"))), Block([Assign(t("="), Var(t("a")), Int(t("1")))]))],
                         Block([Assign(t("="), Var(t("a")), Int(t("1")))]))
     assert str(node) == "if 1 < a {\na = 1\n} elif 1 < a {\na = 1\n} else {\na = 1\n}"
+
+
+def test_for_loop_str():
+    node = ForLoop(Assign(t("="), Var(t("i")), Int(t("0"))),
+                   BinaryOp(t("<"), Var(t("i")), Int(t("10"))),
+                   Assign(t("="), Var(t("i")), BinaryOp(t("+"), Var(t("i")), Int(t("1")))),
+                   Block([Assign(t("="), Var(t("a")), Int(t("1")))]))
+    assert str(node) == "for i = 0; i < 10; i = i + 1 {\na = 1\n}"

@@ -6,7 +6,7 @@ from copy import copy
 
 from collections import defaultdict
 
-from littlepython.ast import SetArrayItem, GetArrayItem
+from littlepython.ast import SetArrayItem, GetArrayItem, ForLoop
 from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
 from littlepython.feature import Features
 
@@ -110,6 +110,13 @@ class LPProg(object):
                 self.handle(_if.block, sym_tbl)
                 return
         self.handle(node.else_block, sym_tbl)
+
+    def handle_forloop(self, node, sym_tbl):
+        assert isinstance(node, ForLoop)
+        self.handle(node.init, sym_tbl)
+        while self.handle(node.ctrl, sym_tbl):
+            self.handle(node.block, sym_tbl)
+            self.handle(node.inc, sym_tbl)
 
     def handle_binaryop(self, node, sym_tbl):
         assert isinstance(node, BinaryOp)

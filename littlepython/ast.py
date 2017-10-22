@@ -128,6 +128,17 @@ class If(AST):
         return "if " + str(self.ctrl) + " " + str(self.block)
 
 
+class ForLoop(AST):
+    def __init__(self, init, ctrl, inc, block):
+        self.init = init
+        self.ctrl = ctrl
+        self.inc = inc
+        self.block = block
+
+    def __str__(self):
+        return "for " + "; ".join(map(str, (self.init, self.ctrl, self.inc))) + " " + str(self.block)
+
+
 class ControlBlock(AST):
     def __init__(self, ifs, else_block=None):
         # This control must contain at least one if.

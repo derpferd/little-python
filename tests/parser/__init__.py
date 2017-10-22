@@ -1,4 +1,5 @@
-from littlepython.ast import Int, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block, GetArrayItem, SetArrayItem
+from littlepython.ast import Int, Var, BinaryOp, UnaryOp, Assign, ControlBlock, If, Block, GetArrayItem, SetArrayItem, \
+    ForLoop
 from littlepython.tokenizer import Token, TokenTypes
 from tests import t
 
@@ -90,6 +91,10 @@ def _if(expr, block):
 
 def ctrl(ifs, els):
     return ControlBlock(ifs, els)
+
+
+def _for(init, ctrl, inc, block):
+    return ForLoop(init, ctrl, inc, block)
 
 
 def getitem(l, r):

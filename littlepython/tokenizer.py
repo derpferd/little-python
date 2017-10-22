@@ -74,6 +74,7 @@ class TokenTypes(Enum):
     IF = auto()
     ELIF = auto()
     ELSE = auto()
+    FOR_LOOP = auto()
 
     # Whitespace
     NEW_LINE = auto()
@@ -109,11 +110,19 @@ class TokenTypes(Enum):
             types |= {TokenTypes.ELIF}
         return types
 
+    @classmethod
+    def loop(cls, features):
+        types = set()
+        if Features.FOR_LOOP in features:
+            types |= {TokenTypes.FOR_LOOP}
+        return types
+
     @staticmethod
     def from_str(s):
         return {'if': TokenTypes.IF,
                 'elif': TokenTypes.ELIF,
                 'else': TokenTypes.ELSE,
+                'for': TokenTypes.FOR_LOOP,
                 'and': TokenTypes.AND,
                 'or': TokenTypes.OR,
                 'not': TokenTypes.NOT,
@@ -206,6 +215,11 @@ class Tokens(object):
             # TODO: write test cases that test this.
             keys.update({
                 'elif': Token(TokenTypes.ELIF, 'elif'),
+            })
+        if Features.FOR_LOOP in features:
+            # TODO: write test cases that test this.
+            keys.update({
+                'for': Token(TokenTypes.FOR_LOOP, 'for'),
             })
         return keys
 
