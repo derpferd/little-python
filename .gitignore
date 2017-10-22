@@ -1,3 +1,6 @@
+# Test generated files
+.coverage
+
 # Compiled python modules.
 *.pyc
 
