@@ -1,14 +1,14 @@
 # Little Python
 
+*A Super Simplified Python with a Little Syntactic Sugar*  
+*MIT License*
+
 **Tests:** [![Build Status](https://travis-ci.org/DerPferd/little-python.svg?branch=master)](https://travis-ci.org/DerPferd/little-python)
 [![Requirements Status](https://requires.io/github/DerPferd/little-python/requirements.svg?branch=master)](https://requires.io/github/DerPferd/little-python/requirements/?branch=master)
+[![codecov](https://codecov.io/gh/DerPferd/little-python/branch/master/graph/badge.svg)](https://codecov.io/gh/DerPferd/little-python)
 
 **Package:** [![Version](https://img.shields.io/pypi/v/littlepython.svg)](https://pypi.python.org/pypi/littlepython)
 [![supported-versions](https://img.shields.io/pypi/pyversions/littlepython.svg)](https://pypi.python.org/pypi/littlepython)
-
-*A Super Simplified Python with a Little Syntactic Sugar*
-
-*MIT License*
 
 ### Statement of Purpose
 
