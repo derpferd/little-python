@@ -1,7 +1,6 @@
 from setuptools import setup
 from distutils.util import convert_path
 
-# TODO: add better metadata https://python-packaging.readthedocs.io/en/latest/metadata.html
 
 # Hack to get around version dependency problems
 # Taken from: https://stackoverflow.com/a/24517154
@@ -24,4 +23,15 @@ setup(name='littlepython',
       install_requires=['enum34;python_version<"3.4"'],
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
-      scripts=['bin/littlepy'])
+      scripts=['bin/littlepy'],
+      classifiers=[
+            # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+            "Development Status :: 3 - Alpha",
+            "License :: OSI Approved :: MIT License",
+            "Intended Audience :: Developers",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.5",
+            "Programming Language :: Python :: 3.6",
+      ]
+      )

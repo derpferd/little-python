@@ -21,7 +21,7 @@ To run all the tests run ```python setup.py test```.
 
 ### Todo
 *This list has been moved to Issues instead*
-- [ ] Add better metadata to setup.py
+- [X] Add better metadata to setup.py
 - [ ] Add negative constant numbers
 - [ ] Add arrays
 - [ ] Add functions
