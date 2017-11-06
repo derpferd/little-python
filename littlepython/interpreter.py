@@ -6,7 +6,7 @@ from copy import copy
 
 from collections import defaultdict
 
-from littlepython.ast import SetArrayItem, GetArrayItem, ForLoop
+from littlepython.ast import SetArrayItem, GetArrayItem, ForLoop, FunctionDef, Call, Function
 from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
 from littlepython.feature import Features
 
@@ -19,6 +19,10 @@ def defaultdict_to_list(d):
         if v != 0:
             l[k] = v
     return l
+
+
+class StopFunc(Exception):
+    pass
 
 
 class AlreadyRunningException(Exception):
@@ -34,6 +38,12 @@ class SymbolTable(object):
         raise NotImplementedError("Must be implemented")
 
     def set(self, name, value):
+        raise NotImplementedError("Must be implemented")
+
+    def enter_scope(self, name="NA"):
+        raise NotImplementedError("Must be implemented")
+
+    def exit_scope(self):
         raise NotImplementedError("Must be implemented")
 
     def __getitem__(self, item):
@@ -53,6 +63,47 @@ class GlobalSymbolTable(SymbolTable):
 
     def set(self, name, value):
         self.global_state[name] = value
+
+    def enter_scope(self, name="NA"):
+        pass
+
+    def exit_scope(self):
+        pass
+
+    def dump_cur_state(self):
+        return copy(self.global_state)
+
+
+class ScopedSymbolTable(SymbolTable):
+    # TODO: write tests for this.
+    def __init__(self, global_state):
+        assert isinstance(global_state, dict)
+        self.global_state = global_state
+        self.scopes = []
+        self.scope_names = []
+
+    def resolve(self, name):
+        for scope in reversed(self.scopes):
+            if name in scope:
+                return scope[name]
+        return self.global_state.get(name, 0)
+
+    def set(self, name, value):
+        if name in self.global_state:
+            self.global_state[name] = value
+            return
+        if self.scopes:
+            self.scopes[-1][name] = value
+        else:
+            self.global_state[name] = value
+
+    def enter_scope(self, name="NA"):
+        self.scopes += [{}]
+        self.scope_names += [name]
+
+    def exit_scope(self):
+        self.scopes.pop(-1)
+        self.scope_names.pop(-1)
 
     def dump_cur_state(self):
         return copy(self.global_state)
@@ -136,6 +187,38 @@ class LPProg(object):
         var = self.handle(node.left, sym_tbl)
         var[self.handle(node.right, sym_tbl)] = self.handle(node.expr, sym_tbl)
 
+    def handle_functiondef(self, node, sym_tbl):
+        assert isinstance(node, FunctionDef)
+        sym_tbl[node.name.value] = node.function
+
+    def handle_call(self, node, sym_tbl):
+        assert isinstance(node, Call)
+        # Look up variable that contains the function.
+        func = sym_tbl[node.func.value]
+        # make sure that the arglist length matches the func signature
+        assert len(func.sig.params) == len(node.arglist)
+        args_copy = []
+        for var in node.arglist:
+            args_copy += [self.handle(var, sym_tbl)]
+
+        sym_tbl.enter_scope()
+
+        for arg, param in zip(args_copy, func.sig.params):
+            sym_tbl[param.value] = arg
+
+        # Now run the function
+        try:
+            self.handle(func.block, sym_tbl)
+        except StopFunc:
+            pass  # This means we hit a return statement
+        rtn = sym_tbl["return"]
+        sym_tbl.exit_scope()
+        return rtn
+
+    def handle_return(self, node, sym_tbl):
+        sym_tbl["return"] = self.handle(node.expr, sym_tbl)
+        raise StopFunc()
+
     def handle(self, node, sym_tbl):
         self.count_remaining -= 1
         if self.count_remaining == 0:
@@ -161,12 +244,14 @@ class LPProg(object):
                     state[key] = new_list
                 else:
                     state[key] = copy(var)
-        sym_tbl = GlobalSymbolTable(state)
+        sym_tbl = ScopedSymbolTable(state)
         self.handle(self.ast, sym_tbl)
         end_state = {}
         for key, var in sym_tbl.dump_cur_state().items():
             if isinstance(var, defaultdict):
                 end_state[key] = defaultdict_to_list(var)
+            elif isinstance(var, Function):
+                continue
             else:
                 end_state[key] = var
 

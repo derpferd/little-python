@@ -2,7 +2,7 @@ import pytest
 
 from littlepython.parser import Parser
 from littlepython.tokenizer import Tokenizer
-from tests.parser import EOF, v, c, add, _not, div, _and, sub, _or, gt, lt, mod, ge, le, mult, _is_not, _is
+from tests import EOF, v, c, add, _not, div, _and, sub, _or, gt, lt, mod, ge, le, mult, _is_not, _is
 
 
 @pytest.mark.parametrize("op, op_str", [

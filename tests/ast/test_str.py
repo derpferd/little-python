@@ -1,7 +1,7 @@
 import pytest
 
-from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST, ForLoop
-from tests import t
+from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST, ForLoop, TAB
+from tests import t, asg, blk, v, c, _def, sig, ret, call, add
 
 
 def test_ast_str():
@@ -44,19 +44,20 @@ def test_assign_str():
 
 def test_block_str():
     node = Block([Assign(t("="), Var(t("a")), Int(t("1")))])
-    assert str(node) == "{\na = 1\n}"
+    assert str(node) == "{\n" + TAB + "a = 1\n}"
 
 
 def test_if_str():
     node = If(BinaryOp(t("<"), Int(t("1")), Var(t("a"))), Block([Assign(t("="), Var(t("a")), Int(t("1")))]))
-    assert str(node) == "if 1 < a {\na = 1\n}"
+    assert str(node) == "if 1 < a {\n" + TAB + "a = 1\n}"
 
 
 def test_control_block_str():
-    node = ControlBlock([If(BinaryOp(t("<"), Int(t("1")), Var(t("a"))), Block([Assign(t("="), Var(t("a")), Int(t("1")))])),
-                         If(BinaryOp(t("<"), Int(t("1")), Var(t("a"))), Block([Assign(t("="), Var(t("a")), Int(t("1")))]))],
-                        Block([Assign(t("="), Var(t("a")), Int(t("1")))]))
-    assert str(node) == "if 1 < a {\na = 1\n} elif 1 < a {\na = 1\n} else {\na = 1\n}"
+    node = ControlBlock(
+        [If(BinaryOp(t("<"), Int(t("1")), Var(t("a"))), Block([Assign(t("="), Var(t("a")), Int(t("1")))])),
+         If(BinaryOp(t("<"), Int(t("1")), Var(t("a"))), Block([Assign(t("="), Var(t("a")), Int(t("1")))]))],
+        Block([Assign(t("="), Var(t("a")), Int(t("1")))]))
+    assert str(node) == "if 1 < a {\n" + TAB + "a = 1\n} elif 1 < a {\n" + TAB + "a = 1\n} else {\n" + TAB + "a = 1\n}"
 
 
 def test_for_loop_str():
@@ -64,4 +65,17 @@ def test_for_loop_str():
                    BinaryOp(t("<"), Var(t("i")), Int(t("10"))),
                    Assign(t("="), Var(t("i")), BinaryOp(t("+"), Var(t("i")), Int(t("1")))),
                    Block([Assign(t("="), Var(t("a")), Int(t("1")))]))
-    assert str(node) == "for i = 0; i < 10; i = i + 1 {\na = 1\n}"
+    assert str(node) == "for i = 0; i < 10; i = i + 1 {\n" + TAB + "a = 1\n}"
+
+
+def test_func_str():
+    ast = _def(v("t"),
+               sig([]),
+               blk([asg(v("a"), c(1)), ret(v("a"))]))
+    assert str(ast) == "func t() {\n" + TAB + "a = 1\n" + TAB + "return a\n}"
+
+
+def test_func_call():
+    ast = ast = asg(v("a"), call(v("t"), [add(v("b"), c(2)), add(c(1), v("c"))]))
+    assert str(ast) == "a = t(b + 2, 1 + c)"
+

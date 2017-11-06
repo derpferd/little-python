@@ -2,7 +2,7 @@ import pytest
 
 from littlepython.parser import Parser
 from littlepython.tokenizer import Tokenizer
-from tests.parser import getitem, v, c, blk, asg, _is, _if, ctrl, setitem, add
+from tests import getitem, v, c, blk, asg, _is, _if, ctrl, setitem, add
 
 
 @pytest.mark.parametrize("var, var_str", [

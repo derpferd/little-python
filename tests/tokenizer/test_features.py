@@ -62,3 +62,17 @@ def test_for_loop_enabled():
     for token in tokens:
         assert tokenizer.get_next_token() == token
 
+
+def test_func_loop_disabled():
+    tokenizer = Tokenizer("func return", Features.NONE)
+    tokens = [t("func"), t("return")]
+    for token in tokens:
+        assert tokenizer.get_next_token() != token
+
+
+def test_func_loop_enabled():
+    tokenizer = Tokenizer("func return", Features.FUNC)
+    tokens = [t("func"), t("return")]
+    for token in tokens:
+        assert tokenizer.get_next_token() == token
+

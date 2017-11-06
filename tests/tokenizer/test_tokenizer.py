@@ -249,9 +249,8 @@ def test_get_next_token_8():
 
 @pytest.mark.parametrize("token_str,token_obj", Tokens.get_all(Features.ALL).items())
 def test_token_str_and_repr(token_str, token_obj):
-    s = str(token_obj)
-    assert s == "Token<type:{}, value:{}>".format(token_obj.type, token_str)
-    assert s == repr(token_obj)
+    assert str(token_obj) == token_str
+    assert repr(token_obj) == "Token<type:{}, value:{}>".format(token_obj.type, token_str)
 
 
 def test_token_eq_with_different_type():

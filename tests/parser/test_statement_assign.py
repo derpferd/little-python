@@ -1,6 +1,6 @@
 from littlepython.parser import Parser
 from littlepython.tokenizer import Tokenizer
-from tests.parser import v, c, asg, add
+from tests import v, c, asg, add
 
 
 def test_simple():

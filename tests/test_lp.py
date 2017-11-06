@@ -902,6 +902,108 @@ class TestLPComplierMethods(TestCase):
         ending_state = prog.run(beginning_state)
         self.assertEqual(expected_state, ending_state)
 
+    def test_simple_func(self):
+        beginning_state = {}
+        code = """func add(a, b){c = a + b
+        return c}
+        d = add(1, 2)"""
+        expected_state = {"d": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_func_no_return(self):
+        beginning_state = {}
+        code = """func add(a, b){c = a + b}
+        d = add(1, 2)"""
+        expected_state = {"d": 0}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_func_return(self):
+        beginning_state = {}
+        code = """func add(a, b){
+        c = a + b
+        return c
+        return 0
+        }
+        d = add(1, 2)"""
+        expected_state = {"d": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_func_scope_1(self):
+        beginning_state = {"a": 4, "b": 5, "c": 6}
+        code = """func add(a, b){c = a + b
+        return c}
+        d = add(1, 2)"""
+        expected_state = {"a": 1, "b": 2, "c": 3, "d": 3}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_func_recur(self):
+        beginning_state = {}
+        code = """func fib(n){
+        if n is 0 { return 0 }
+        if n is 1 { return 1 }
+        return fib(n-1)+fib(n-2)}
+        d = fib(6)"""
+        expected_state = {"d": 8}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_func_recur_large(self):
+        beginning_state = {}
+        code = """func fib(n){
+        if n is 0 { return 0 }
+        if n is 1 { return 1 }
+        return fib(n-1)+fib(n-2)}
+        d = fib(13)"""
+        expected_state = {"d": 233}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        ending_state = prog.run(beginning_state)
+        self.assertEqual(expected_state, ending_state)
+
+    def test_func_recur_count_exceeded(self):
+        beginning_state = {}
+        code = """func fib(n){
+        if n is 0 { return 0 }
+        if n is 1 { return 1 }
+        return fib(n-1)+fib(n-2)}
+        d = fib(13)"""
+        expected_state = {"d": 233}
+
+        # compile code into LPProg
+        prog = self.compiler.compile(code)
+
+        try:
+            ending_state = prog.run(beginning_state, max_op_count=1000)
+        except ExecutionCountExceededException:
+            return
+        self.fail("Should have thrown an exception.")
+
     def test_execution_count_exceeded(self):
         code = """a = 1\na = 1\na = 1\na = 1\na = 1\na = 1\na = 1\na = 1\n"""
 

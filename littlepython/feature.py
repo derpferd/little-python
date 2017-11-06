@@ -64,6 +64,7 @@ class Features(object):
     TYPE_ARRAY = feature("TYPE_ARRAY")
     RANDOM_VAR = feature("RANDOM_VAR")
     FOR_LOOP = feature("FOR_LOOP")
+    FUNC = feature("FUNC")
 
-    ALL = IF | ELIF | TYPE_ARRAY | RANDOM_VAR | FOR_LOOP
+    ALL = IF | ELIF | TYPE_ARRAY | RANDOM_VAR | FOR_LOOP | FUNC
     NONE = FeatureSet([])

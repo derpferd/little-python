@@ -1,6 +1,6 @@
 from littlepython.parser import Parser
 from littlepython.tokenizer import Tokenizer
-from tests.parser import _if, ctrl, blk, _is, v, c, asg
+from tests import _if, ctrl, blk, _is, v, c, asg
 
 
 def test_if():

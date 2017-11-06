@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int, GetArrayItem, SetArrayItem, \
-    ForLoop
+    ForLoop, FunctionSig, Function, FunctionDef, Call, Return
 from littlepython.feature import Features
 from littlepython.tokenizer import TokenTypes
 
@@ -39,6 +39,9 @@ class Parser(object):
                     | empty
         Feature For Loop adds:
                     | loop
+        Feature Func adds:
+                    | func
+                    | return statement
         """
         if self.cur_token.type == TokenTypes.VAR:
             return self.assign_statement()
@@ -46,6 +49,11 @@ class Parser(object):
             return self.control()
         elif self.cur_token.type in TokenTypes.loop(self.features):
             return self.loop()
+        elif self.cur_token.type in TokenTypes.func(self.features):
+            if self.cur_token.type == TokenTypes.FUNC:
+                return self.func()
+            elif self.cur_token.type == TokenTypes.RETURN:
+                return self.return_statement()
 
     def assign_statement(self):
         """
@@ -66,6 +74,13 @@ class Parser(object):
         if self.cur_token.type == TokenTypes.SEMI_COLON:
             self.eat(TokenTypes.SEMI_COLON)
         return smt
+
+    def return_statement(self):
+        """
+        return smt  : expression
+        """
+        self.eat(TokenTypes.RETURN)
+        return Return(self.expression())
 
     def control(self):
         """
@@ -88,7 +103,7 @@ class Parser(object):
 
     def loop(self):
         """
-        loop    : 'for' init; ctrl; inc block
+        loop       : 'for' init; ctrl; inc block
         """
         self.eat(TokenTypes.FOR_LOOP)
         init = self.assign_statement()
@@ -97,6 +112,48 @@ class Parser(object):
         inc = self.assign_statement()
         block = self.block()
         return ForLoop(init, ctrl, inc, block)
+
+    def func(self):
+        """
+        func       : func name(paramlist) block
+        """
+        self.eat(TokenTypes.FUNC)
+        name = Var(self.cur_token)
+        self.eat(TokenTypes.VAR)
+        self.eat(TokenTypes.LPAREN)
+        sig = self.param_list()
+        self.eat(TokenTypes.RPAREN)
+        block = self.block()
+        return FunctionDef(name, Function(sig, block))
+
+    def param_list(self):
+        """
+        paramlist  : var, paramlist
+        paramlist  : var
+        paramlist  :
+        """
+        params = []
+        while self.cur_token.type == TokenTypes.VAR:
+            params.append(Var(self.cur_token))
+            self.eat(TokenTypes.VAR)
+            if self.cur_token.type == TokenTypes.COMMA:
+                self.eat(TokenTypes.COMMA)
+
+        return FunctionSig(params)
+
+    def arg_list(self):
+        """
+        arglist    : expression, arglist
+        arglist    : expression
+        arglist    :
+        """
+        args = []
+        while not self.cur_token.type == TokenTypes.RPAREN:
+            args.append(self.expression())
+            if self.cur_token.type == TokenTypes.COMMA:
+                self.eat(TokenTypes.COMMA)
+
+        return args
 
     def block(self):
         """
@@ -118,6 +175,8 @@ class Parser(object):
         variable    : variable
         Feature Type Array adds:
         variable    : variable[expression]
+        Feature Type Func adds:
+        variable    : variable(expression)
         """
         var = Var(self.cur_token)
         self.eat(TokenTypes.VAR)
@@ -128,6 +187,12 @@ class Parser(object):
                 expr = self.operator_expression(level=2)
                 self.eat(TokenTypes.RBRACKET)
                 var = GetArrayItem(left=var, right=expr)
+        if Features.FUNC in self.features:
+            if self.cur_token.type == TokenTypes.LPAREN:
+                self.eat(TokenTypes.LPAREN)
+                args = self.arg_list()
+                self.eat(TokenTypes.RPAREN)
+                var = Call(var, args)
         return var
 
     def expression(self):

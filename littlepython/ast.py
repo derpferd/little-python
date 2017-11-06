@@ -3,6 +3,10 @@ from __future__ import unicode_literals
 from littlepython.tokenizer import Token, TokenTypes
 
 
+TAB_WIDTH = 2
+TAB = " "*TAB_WIDTH
+
+
 def _var(n):
     return Var(Token(TokenTypes.VAR, n))
 
@@ -11,7 +15,8 @@ class AST(object):
     def __eq__(self, other):
         if type(self) != type(other):
             return False
-        possible_attrs = ["token", "left", "right", "children", "sig", "block", "ifs", "else_block", "ctrl", "params"]
+        possible_attrs = ["token", "left", "right", "children", "sig", "block", "ifs", "else_block", "ctrl", "params",
+                          "expr", "function", "arglist"]
         for attr in possible_attrs:
             if hasattr(self, attr) != hasattr(other, attr):
                 return False
@@ -95,7 +100,18 @@ class Function(AST):
         self.block = block
 
     def __str__(self):
-        return " ".join(map(str, ("func", self.sig, self.block)))
+        return "lambda {sig}:{block}".format(sig=self.sig, block=self.block)
+
+
+class FunctionDef(AST):
+    def __init__(self, name, function):
+        assert isinstance(name, Var)
+        assert isinstance(function, Function)
+        self.name = name
+        self.function = function
+
+    def __str__(self):
+        return "func {name}{sig} {block}".format(name=self.name, sig=self.function.sig, block=self.function.block)
 
 
 class Assign(AST):
@@ -116,7 +132,7 @@ class Block(AST):
         self.children = children
 
     def __str__(self):
-        return "{\n" + "\n".join(map(str, self.children)) + "\n}"
+        return "{\n" + "\n".join(map(lambda x: TAB + str(x), self.children)) + "\n}"
 
 
 class If(AST):
@@ -178,3 +194,27 @@ class SetArrayItem(Function):
 
     def __str__(self):
         return str(self.left) + "[" + str(self.right) + "] = " + str(self.expr)
+
+
+class Call(AST):
+    def __init__(self, func, arglist):
+        assert isinstance(func, Var)
+        self.func = func
+        self.arglist = arglist
+
+    def __str__(self):
+        s = str(self.func) + "("
+        for arg in self.arglist:
+            s += str(arg) + ", "
+        if self.arglist:
+            s = s[:-2]
+        s += ")"
+        return s
+
+
+class Return(AST):
+    def __init__(self, expr):
+        self.expr = expr
+
+    def __str__(self):
+        return "return " + str(self.expr)

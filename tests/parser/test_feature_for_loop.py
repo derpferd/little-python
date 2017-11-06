@@ -2,7 +2,7 @@ import pytest
 
 from littlepython.parser import Parser
 from littlepython.tokenizer import Tokenizer
-from tests.parser import _for, c, v, asg, lt, blk, add, getitem
+from tests import _for, c, v, asg, lt, blk, add, getitem
 
 
 def test_simple():

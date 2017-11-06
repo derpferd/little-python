@@ -68,6 +68,7 @@ class TokenTypes(Enum):
     RBRACE = auto()
     LBRACKET = auto()
     RBRACKET = auto()
+    COMMA = auto()
 
     # control
     ASSIGN = auto()
@@ -75,6 +76,8 @@ class TokenTypes(Enum):
     ELIF = auto()
     ELSE = auto()
     FOR_LOOP = auto()
+    FUNC = auto()
+    RETURN = auto()
 
     # Whitespace
     NEW_LINE = auto()
@@ -117,17 +120,25 @@ class TokenTypes(Enum):
             types |= {TokenTypes.FOR_LOOP}
         return types
 
+    @classmethod
+    def func(cls, features):
+        if Features.FUNC in features:
+            return {TokenTypes.FUNC, TokenTypes.RETURN}
+        return {}
+
     @staticmethod
     def from_str(s):
         return {'if': TokenTypes.IF,
                 'elif': TokenTypes.ELIF,
                 'else': TokenTypes.ELSE,
                 'for': TokenTypes.FOR_LOOP,
+                'func': TokenTypes.FUNC,
                 'and': TokenTypes.AND,
                 'or': TokenTypes.OR,
                 'not': TokenTypes.NOT,
                 'is': TokenTypes.EQUAL,
                 'is not': TokenTypes.NOT_EQUAL,
+                'return': TokenTypes.RETURN,
                 '+': TokenTypes.ADD,
                 '-': TokenTypes.SUB,
                 '*': TokenTypes.MULT,
@@ -145,6 +156,7 @@ class TokenTypes(Enum):
                 '[': TokenTypes.LBRACKET,
                 ']': TokenTypes.RBRACKET,
                 ';': TokenTypes.SEMI_COLON,
+                ',': TokenTypes.COMMA,
                 '\n': TokenTypes.NEW_LINE,
                 None: TokenTypes.EOF}.get(s, None)
 
@@ -155,9 +167,10 @@ class Token(object):
         self.value = value
 
     def __str__(self):
-        return "Token<type:{}, value:{}>".format(self.type, str(self.value))
+        return self.value
 
-    __repr__ = __str__
+    def __repr__(self):
+        return "Token<type:{}, value:{}>".format(self.type, str(self.value))
 
     def __eq__(self, other):
         if type(self) != type(other):
@@ -221,6 +234,12 @@ class Tokens(object):
             keys.update({
                 'for': Token(TokenTypes.FOR_LOOP, 'for'),
             })
+        if Features.FUNC in features:
+            # TODO: write test cases that test this.
+            keys.update({
+                'func': Token(TokenTypes.FUNC, 'func'),
+                'return': Token(TokenTypes.RETURN, 'return'),
+            })
         return keys
 
     @staticmethod
@@ -239,6 +258,7 @@ class Tokens(object):
             ')': Token(TokenTypes.RPAREN, ')'),
             '=': Token(TokenTypes.ASSIGN, '='),
             ';': Token(TokenTypes.SEMI_COLON, ';'),
+            ',': Token(TokenTypes.COMMA, ','),
             '<=': Token(TokenTypes.LESS_EQUAL, '<='),
             '>=': Token(TokenTypes.GREATER_EQUAL, '>='),
         }
