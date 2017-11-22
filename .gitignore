@@ -15,3 +15,5 @@
 
 .cache/*
 .eggs/*
+
+docs/build/*
