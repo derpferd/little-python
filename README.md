@@ -12,7 +12,7 @@
 
 ### Statement of Purpose
 
-> The intent of the Little Python programming language is to implement a simple language that is easy for people with little to no coding experience to create a program. The need for such a language arose when creating a framework for competitions  where individuals of all skill levels can create a rudimentary AI to compete against various challenges. We wanted to “level” the playing field by having a language that is limited in functionality, creating an even playing field. Please keep this in mind when suggesting and/or commenting on the design features.
+> The intent of the Little Python programming language is to implement a simple language that is easy for people with little to no coding experience to create a program. The need for such a language arose when creating a framework for competitions  where individuals of all skill levels can create a rudimentary AI to compete against various challenges. We wanted to “level” the playing field by having a language that is limited in functionality and is unfamiliar to anyone. Please keep this in mind when suggesting and/or commenting on the design features.
 
 ### Install
 Run this following command to install from PyPI.
