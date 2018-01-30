@@ -229,6 +229,14 @@ class LPProg(object):
             raise NotImplementedError("No {} found.".format(name))
         return handler(node, sym_tbl)
 
+    def convert_python_type_to_lp_type(self, var):
+        if isinstance(var, list):
+            new_list = defaultdict(int)
+            for i, v in enumerate(var):
+                new_list[i] = self.convert_python_type_to_lp_type(v)
+            return new_list
+        return copy(var)
+
     def run(self, static_vars=None, max_op_count=-1):
         if self.running:
             raise AlreadyRunningException("This program can only be run on one thread. And this one is already running.")
@@ -237,13 +245,7 @@ class LPProg(object):
         state = {}
         if static_vars is not None:
             for key, var in static_vars.items():
-                if isinstance(var, list):
-                    new_list = defaultdict(int)
-                    for i, v in enumerate(var):
-                        new_list[i] = v
-                    state[key] = new_list
-                else:
-                    state[key] = copy(var)
+                state[key] = self.convert_python_type_to_lp_type(var)
         sym_tbl = ScopedSymbolTable(state)
         self.handle(self.ast, sym_tbl)
         end_state = {}
