@@ -15,11 +15,14 @@ class Parser(object):
     def error(self, msg=""):
         raise Exception("Invalid syntax: " + msg)
 
-    def eat(self, token_type):
-        if self.cur_token.type == token_type:
-            self.cur_token = next(self.tokenizer)
+    def eat(self, token_type=None):
+        if token_type:
+            if self.cur_token.type == token_type:
+                self.cur_token = next(self.tokenizer)
+            else:
+                self.error("Excepted token type {} got {}".format(token_type, self.cur_token.type))
         else:
-            self.error("Excepted token type {} got {}".format(token_type, self.cur_token.type))
+            self.cur_token = next(self.tokenizer)
 
     def program(self):
         """program : (newline) statement
@@ -34,7 +37,8 @@ class Parser(object):
 
     def statement(self):
         """
-        statement   : assign statement
+        statement   : assign_statement
+                    | expression
                     | control
                     | empty
         Feature For Loop adds:
@@ -44,7 +48,15 @@ class Parser(object):
                     | return statement
         """
         if self.cur_token.type == TokenTypes.VAR:
-            return self.assign_statement()
+            self.tokenizer.start_saving(self.cur_token)
+            self.variable()
+            peek_var = self.cur_token
+            self.tokenizer.replay()
+            self.eat()
+            if peek_var.type == TokenTypes.ASSIGN:
+                return self.assign_statement()
+            else:
+                return self.expression()
         elif self.cur_token.type in TokenTypes.control(self.features):
             return self.control()
         elif self.cur_token.type in TokenTypes.loop(self.features):
@@ -176,7 +188,7 @@ class Parser(object):
         Feature Type Array adds:
         variable    : variable[expression]
         Feature Type Func adds:
-        variable    : variable(expression)
+        variable    : variable(arg_list)
         """
         var = Var(self.cur_token)
         self.eat(TokenTypes.VAR)

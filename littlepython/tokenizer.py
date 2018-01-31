@@ -277,6 +277,8 @@ class Tokenizer(object):
         self.last_was_eof = False
         self.advance()
         self.features = features
+        self.history = []
+        self.saving = False
 
         self.keywords = Tokens.get_keywords(features)
         self.mult_keywords = Tokens.get_multi_word_keywords(self.features)
@@ -291,7 +293,18 @@ class Tokenizer(object):
             raise StopIteration()
         if token.type == TokenTypes.EOF:
             self.last_was_eof = True
+        if self.saving:
+            self.history += [token]
         return token
+
+    def start_saving(self, cur_token):
+        self.saving = True
+        self.history = [cur_token]
+
+    def replay(self):
+        self.saving = False
+        if self.history:
+            self.last_was_eof = False
 
     # For Python 2 support
     next = __next__
@@ -358,7 +371,9 @@ class Tokenizer(object):
             if self.text[self.cur_pos:self.cur_pos+len(token)] == token:  # the token is the same as the next chars.
                 return self.non_alpha[token]
 
-    def get_next_token(self):
+    def get_next_token(self):  # TODO: make this private.
+        if not self.saving and self.history:
+            return self.history.pop(0)
         while self.cur_char is not None:
             if self.cur_char.isspace() and self.cur_char != "\n":
                 self.skip_whitespace()
