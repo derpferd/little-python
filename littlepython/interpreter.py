@@ -21,6 +21,27 @@ def defaultdict_to_list(d):
     return l
 
 
+def convert_python_type_to_lp_type(var):
+    if isinstance(var, list):
+        new_list = defaultdict(int)
+        for i, v in enumerate(var):
+            new_list[i] = convert_python_type_to_lp_type(v)
+        return new_list
+    return copy(var)
+
+
+def convert_lp_type_to_python_type(var):
+    if isinstance(var, defaultdict):
+        valid_keys = [x for x in var.keys() if var[x] != 0]
+        length = max(valid_keys)+1
+        new_list = [0] * length
+        for k, v in var.items():
+            if v != 0:
+                new_list[k] = convert_lp_type_to_python_type(v)
+        return new_list
+    return copy(var)
+
+
 class StopFunc(Exception):
     pass
 
@@ -229,14 +250,6 @@ class LPProg(object):
             raise NotImplementedError("No {} found.".format(name))
         return handler(node, sym_tbl)
 
-    def convert_python_type_to_lp_type(self, var):
-        if isinstance(var, list):
-            new_list = defaultdict(int)
-            for i, v in enumerate(var):
-                new_list[i] = self.convert_python_type_to_lp_type(v)
-            return new_list
-        return copy(var)
-
     def run(self, static_vars=None, max_op_count=-1):
         if self.running:
             raise AlreadyRunningException("This program can only be run on one thread. And this one is already running.")
@@ -245,17 +258,17 @@ class LPProg(object):
         state = {}
         if static_vars is not None:
             for key, var in static_vars.items():
-                state[key] = self.convert_python_type_to_lp_type(var)
+                state[key] = convert_python_type_to_lp_type(var)
         sym_tbl = ScopedSymbolTable(state)
         self.handle(self.ast, sym_tbl)
         end_state = {}
         for key, var in sym_tbl.dump_cur_state().items():
-            if isinstance(var, defaultdict):
-                end_state[key] = defaultdict_to_list(var)
-            elif isinstance(var, Function):
+            # if isinstance(var, defaultdict):
+            #     end_state[key] = defaultdict_to_list(var)
+            if isinstance(var, Function):
                 continue
             else:
-                end_state[key] = var
+                end_state[key] = convert_lp_type_to_python_type(var)
 
         self.running = False
         return end_state

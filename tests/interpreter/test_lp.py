@@ -848,7 +848,7 @@ class TestLPComplierMethods(TestCase):
     def test_2d_array_access(self):
         beginning_state = {"a": [[1, 4], [2, 7], [3, 5]]}
         code = """if a[0][0] is 1 {
-         b= 2
+         b = 2
         }"""
         expected_state = {"a": [[1, 4], [2, 7], [3, 5]], "b": 2}
 
