@@ -34,6 +34,11 @@ class AST(object):
         return self.__str__()
 
 
+class NoOp(AST):
+    def __str__(self):
+        return ""
+
+
 class Int(AST):
     def __init__(self, token):
         self.token = token

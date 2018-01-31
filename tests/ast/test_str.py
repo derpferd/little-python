@@ -1,6 +1,6 @@
 import pytest
 
-from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST, ForLoop, TAB
+from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST, ForLoop, TAB, NoOp
 from tests import t, asg, blk, v, c, _def, sig, ret, call, add
 
 
@@ -8,6 +8,13 @@ def test_ast_str():
     node = AST()
     with pytest.raises(NotImplementedError):
         str(node)
+
+
+def test_noop_str():
+    node = NoOp()
+    s = str(node)
+    assert s == ""
+    assert s == repr(node)
 
 
 def test_int_str():

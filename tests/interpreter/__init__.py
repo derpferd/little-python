@@ -6,8 +6,8 @@ def compile(code, features=Features.ALL):
     return compiler.compile(code, features=features)
 
 
-def run(code, **kargs):
+def run(code, max_op_count=-1, **kargs):
     if len(kargs) == 1 and "in_state" in kargs:
-        return compile(code).run(kargs["in_state"])
+        return compile(code).run(kargs["in_state"], max_op_count=max_op_count)
     else:
-        return compile(code).run(kargs)
+        return compile(code).run(kargs, max_op_count=max_op_count)

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int, GetArrayItem, SetArrayItem, \
-    ForLoop, FunctionSig, Function, FunctionDef, Call, Return
+    ForLoop, FunctionSig, Function, FunctionDef, Call, Return, NoOp
 from littlepython.feature import Features
 from littlepython.tokenizer import TokenTypes
 
@@ -118,10 +118,21 @@ class Parser(object):
         loop       : 'for' init; ctrl; inc block
         """
         self.eat(TokenTypes.FOR_LOOP)
-        init = self.assign_statement()
-        ctrl = self.expression()
+        init = NoOp()
+        if self.cur_token.type != TokenTypes.SEMI_COLON:
+            init = self.assign_statement()
+        else:
+            self.eat(TokenTypes.SEMI_COLON)
+
+        ctrl = NoOp()
+        if self.cur_token.type != TokenTypes.SEMI_COLON:
+            ctrl = self.expression()
         self.eat(TokenTypes.SEMI_COLON)
-        inc = self.assign_statement()
+
+        inc = NoOp()
+        if self.cur_token.type != TokenTypes.LBRACE:
+            inc = self.assign_statement()
+
         block = self.block()
         return ForLoop(init, ctrl, inc, block)
 

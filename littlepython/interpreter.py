@@ -156,6 +156,9 @@ class LPProg(object):
         self.running = False
         self.count_remaining = -1
 
+    def handle_noop(self, *args, **kwargs):
+        pass
+
     def handle_var(self, node, sym_tbl):
         if node.value == "rand" and Features.RANDOM_VAR in self.features:
             from random import randint
