@@ -2,6 +2,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import random
 from copy import copy
 
 from collections import defaultdict
@@ -155,14 +156,14 @@ class LPProg(object):
         self.features = features
         self.running = False
         self.count_remaining = -1
+        self.random = random
 
     def handle_noop(self, *args, **kwargs):
         pass
 
     def handle_var(self, node, sym_tbl):
         if node.value == "rand" and Features.RANDOM_VAR in self.features:
-            from random import randint
-            return randint(-2147483647, 2147483647)
+            return self.random.randint(-2147483647, 2147483647)
         return sym_tbl[node.value]
 
     def handle_int(self, node, sym_tbl):
@@ -253,11 +254,13 @@ class LPProg(object):
             raise NotImplementedError("No {} found.".format(name))
         return handler(node, sym_tbl)
 
-    def run(self, static_vars=None, max_op_count=-1):
+    def run(self, static_vars=None, max_op_count=-1, random=None):
         if self.running:
             raise AlreadyRunningException("This program can only be run on one thread. And this one is already running.")
         self.running = True
         self.count_remaining = max_op_count
+        if random is not None:
+            self.random = random
         state = {}
         if static_vars is not None:
             for key, var in static_vars.items():
