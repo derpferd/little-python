@@ -3,7 +3,7 @@
 
 from unittest import TestCase
 
-from littlepython.error import ExecutionCountExceededException
+from littlepython.error import ExecutionCountExceededException, DivisionByZeroException
 from littlepython.lp import Compiler
 
 
@@ -178,7 +178,7 @@ class TestLPComplierMethods(TestCase):
         # compile code into LPProg
         prog = self.compiler.compile(code)
 
-        self.assertRaises(ZeroDivisionError, prog.run, beginning_state)
+        self.assertRaises(DivisionByZeroException, prog.run, beginning_state)
 
     def test_op_mod(self):
         beginning_state = {}
@@ -202,7 +202,7 @@ class TestLPComplierMethods(TestCase):
         # compile code into LPProg
         prog = self.compiler.compile(code)
 
-        self.assertRaises(ZeroDivisionError, prog.run, beginning_state)
+        self.assertRaises(DivisionByZeroException, prog.run, beginning_state)
 
     def test_op_lt(self):
         code = """c = a < b"""

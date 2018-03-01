@@ -8,7 +8,7 @@ from copy import copy
 from collections import defaultdict
 
 from littlepython.ast import SetArrayItem, GetArrayItem, ForLoop, FunctionDef, Call, Function
-from littlepython.error import ExecutionCountExceededException, AlreadyRunningException
+from littlepython.error import ExecutionCountExceededException, AlreadyRunningException, DivisionByZeroException
 from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
 from littlepython.feature import Features
 
@@ -189,7 +189,10 @@ class LPProg(object):
 
     def handle_binaryop(self, node, sym_tbl):
         assert isinstance(node, BinaryOp)
-        return self.binaryOps[node.op.value](self.handle(node.left, sym_tbl), self.handle(node.right, sym_tbl))
+        try:
+            return self.binaryOps[node.op.value](self.handle(node.left, sym_tbl), self.handle(node.right, sym_tbl))
+        except ZeroDivisionError:
+            raise DivisionByZeroException()
 
     def handle_unaryop(self, node, sym_tbl):
         assert isinstance(node, UnaryOp)

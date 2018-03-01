@@ -1,5 +1,7 @@
 from __future__ import division
 import pytest
+
+from littlepython.error import DivisionByZeroException
 from tests.interpreter import run
 
 
@@ -36,7 +38,7 @@ def test_binary_integer_ops(a, b, op_str, op_lambda):
     code = "c = a {} b".format(op_str)
 
     if op_str in "/%" and b == 0:
-        with pytest.raises(ZeroDivisionError):
+        with pytest.raises(DivisionByZeroException):
             run(code, a=a, b=b)
     else:
         out = run(code, a=a, b=b)

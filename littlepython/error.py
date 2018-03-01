@@ -14,3 +14,7 @@ class ExecutionCountExceededException(LittlePythonBaseExcetion):
 
 class InvalidSyntaxException(LittlePythonBaseExcetion):
     pass
+
+
+class DivisionByZeroException(LittlePythonBaseExcetion):
+    pass
