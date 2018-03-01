@@ -3,7 +3,7 @@
 
 from unittest import TestCase
 
-from littlepython.interpreter import ExecutionCountExceededException
+from littlepython.error import ExecutionCountExceededException
 from littlepython.lp import Compiler
 
 

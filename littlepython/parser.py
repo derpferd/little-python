@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from littlepython.error import InvalidSyntaxException
 from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int, GetArrayItem, SetArrayItem, \
     ForLoop, FunctionSig, Function, FunctionDef, Call, Return, NoOp
 from littlepython.feature import Features
@@ -13,7 +14,7 @@ class Parser(object):
         self.features = features
 
     def error(self, msg=""):
-        raise Exception("Invalid syntax: " + msg)
+        raise InvalidSyntaxException("Invalid syntax: " + msg)
 
     def eat(self, token_type=None):
         if token_type:
@@ -66,6 +67,7 @@ class Parser(object):
                 return self.func()
             elif self.cur_token.type == TokenTypes.RETURN:
                 return self.return_statement()
+        self.error("Invalid token or unfinished statement")
 
     def assign_statement(self):
         """

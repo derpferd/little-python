@@ -1,5 +1,6 @@
 import pytest
 
+from littlepython import InvalidSyntaxException
 from littlepython.parser import Parser
 from littlepython.tokenizer import Tokenizer
 from tests import _def, c, v, asg, v, blk, add, getitem, func, sig, call, ret
@@ -53,3 +54,10 @@ def test_call_with_add():
 
     parser = Parser(Tokenizer("a = t(b+2, 1+c)"))
     assert parser.statement() == ast
+
+
+@pytest.mark.timeout(0.1)
+def test_invalid_statement_in_block():
+    parser = Parser(Tokenizer("func t() {a() {} }"))
+    with pytest.raises(InvalidSyntaxException):
+        parser.statement()

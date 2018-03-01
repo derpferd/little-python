@@ -8,6 +8,7 @@ from copy import copy
 from collections import defaultdict
 
 from littlepython.ast import SetArrayItem, GetArrayItem, ForLoop, FunctionDef, Call, Function
+from littlepython.error import ExecutionCountExceededException, AlreadyRunningException
 from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
 from littlepython.feature import Features
 
@@ -44,14 +45,6 @@ def convert_lp_type_to_python_type(var):
 
 
 class StopFunc(Exception):
-    pass
-
-
-class AlreadyRunningException(Exception):
-    pass
-
-
-class ExecutionCountExceededException(Exception):
     pass
 
 
