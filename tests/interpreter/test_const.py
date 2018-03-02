@@ -16,4 +16,13 @@ def test_int_consts(a):
     assert end["a"] == a
 
 
-# TODO: when array consts are a thing add the tests here.
+@pytest.mark.parametrize("a", [
+    [],
+    [1, 2, 3, 4],
+    [[1, 2], [3, 4]],
+    [[[[[1]]]], [2, 2, 3, [3]]],
+])
+def test_array_consts(a):
+    end = run("a={}".format(a))
+    assert end["a"] == a
+

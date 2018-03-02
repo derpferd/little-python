@@ -15,6 +15,18 @@ from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, Unary
 from littlepython.feature import Features
 
 
+class Array(defaultdict):
+    def __init__(self, *args):
+        super(Array, self).__init__(int)
+        if len(args) == 1:
+            try:
+                for i, arg in enumerate(args[0]):
+                    self[i] = arg
+            except TypeError:
+                for i, arg in enumerate(args):
+                    self[i] = arg
+
+
 def defaultdict_to_list(d):
     valid_keys = [x for x in d.keys() if d[x] != 0]
     length = max(valid_keys)+1
@@ -37,7 +49,9 @@ def convert_python_type_to_lp_type(var):
 def convert_lp_type_to_python_type(var):
     if isinstance(var, defaultdict):
         valid_keys = [x for x in var.keys() if var[x] != 0]
-        length = max(valid_keys)+1
+        if not valid_keys:
+            return []
+        length = max(valid_keys) + 1
         new_list = [0] * length
         for k, v in var.items():
             if v != 0:
@@ -163,6 +177,12 @@ class LPProg(object):
 
     def handle_int(self, node, sym_tbl):
         return node.value
+
+    def handle_array(self, node, sym_tbl):
+        # array =
+        # for i, val in enumerate(node.vals):
+        #     array[i] = self.handle(node, sym_tbl)
+        return Array(self.handle(val, sym_tbl) for val in node.vals)
 
     def handle_assign(self, node, sym_tbl):
         assert isinstance(node, Assign)

@@ -1,5 +1,6 @@
 import pytest
 
+from littlepython.ast import Array
 from littlepython.parser import Parser
 from littlepython.tokenizer import Tokenizer
 from tests import getitem, v, c, blk, asg, _is, _if, ctrl, setitem, add
@@ -33,10 +34,26 @@ def test_getitem(var, expr, var_str, expr_str):
     (c(0), "0"),
     (v("c"), "c"),
     (getitem(v("c"), c(1)), "c[1]"),
+    (Array([v("c"), c(1), c(2)]), "[c,1,2]"),
 ])
 def test_setitem(var, expr, val, var_str, expr_str, val_str):
     ast = setitem(var, expr, val)
     parser = Parser(Tokenizer(var_str+"["+expr_str+"]"+"="+val_str))
+    assert parser.statement() == ast
+
+
+@pytest.mark.parametrize("var, var_str", [
+    (v("a"), "a"),
+])
+@pytest.mark.parametrize("exprs, expr_strs", [
+    ([c(0)], ["0"]),
+    ([add(v("b"), c(1))], ["b+1"]),
+    ([v("b")], ["b"]),
+])
+def test_literals(var, var_str, exprs, expr_strs):
+    ast = asg(var, Array(exprs))
+    s = "{} = [{}]".format(var_str, ",".join(expr_strs))
+    parser = Parser(Tokenizer(s))
     assert parser.statement() == ast
 
 

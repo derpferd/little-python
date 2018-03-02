@@ -1,6 +1,7 @@
 import pytest
 
-from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST, ForLoop, TAB, NoOp
+from littlepython.ast import BinaryOp, Int, UnaryOp, Var, Assign, Block, If, ControlBlock, AST, ForLoop, TAB, NoOp, \
+    Array
 from tests import t, asg, blk, v, c, _def, sig, ret, call, add
 
 
@@ -21,6 +22,24 @@ def test_int_str():
     node = Int(t("1"))
     s = str(node)
     assert s == "1"
+    assert s == repr(node)
+
+
+def test_array_str():
+    node = Array([Int(t("1"))])
+    s = str(node)
+    assert s == "[1]"
+    assert s == repr(node)
+
+    node = Array([Int(t("1")), Int(t("2")), Int(t("3"))])
+    s = str(node)
+    assert s == "[1, 2, 3]"
+    assert s == repr(node)
+
+    node = Array([Int(t("1")), Int(t("2")), Int(t("3")),
+                  Array([Int(t("1")), Int(t("2")), Int(t("3"))])])
+    s = str(node)
+    assert s == "[1, 2, 3, [1, 2, 3]]"
     assert s == repr(node)
 
 
@@ -83,6 +102,6 @@ def test_func_str():
 
 
 def test_func_call():
-    ast = ast = asg(v("a"), call(v("t"), [add(v("b"), c(2)), add(c(1), v("c"))]))
-    assert str(ast) == "a = t(b + 2, 1 + c)"
+    ast = asg(v("a"), call(v("t"), [add(v("b"), c(2)), add(c(1), v("c"))]))
+    assert "a = t(b + 2, 1 + c)" == str(ast)
 

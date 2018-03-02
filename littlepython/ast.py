@@ -16,7 +16,7 @@ class AST(object):
         if type(self) != type(other):
             return False
         possible_attrs = ["token", "left", "right", "children", "sig", "block", "ifs", "else_block", "ctrl", "params",
-                          "expr", "function", "arglist"]
+                          "expr", "function", "arglist", "vals"]
         for attr in possible_attrs:
             if hasattr(self, attr) != hasattr(other, attr):
                 return False
@@ -46,6 +46,14 @@ class Int(AST):
 
     def __str__(self):
         return str(self.value)
+
+
+class Array(AST):
+    def __init__(self, vals):
+        self.vals = vals
+
+    def __str__(self):
+        return "[{}]".format(", ".join(map(str, self.vals)))
 
 
 class Var(AST):
@@ -208,13 +216,7 @@ class Call(AST):
         self.arglist = arglist
 
     def __str__(self):
-        s = str(self.func) + "("
-        for arg in self.arglist:
-            s += str(arg) + ", "
-        if self.arglist:
-            s = s[:-2]
-        s += ")"
-        return s
+        return "{}({})".format(self.func, ", ".join(map(str, self.arglist)))
 
 
 class Return(AST):

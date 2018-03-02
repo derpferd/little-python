@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from littlepython.error import InvalidSyntaxException
 from littlepython.ast import Block, Assign, If, ControlBlock, Var, BinaryOp, UnaryOp, Int, GetArrayItem, SetArrayItem, \
-    ForLoop, FunctionSig, Function, FunctionDef, Call, Return, NoOp
+    ForLoop, FunctionSig, Function, FunctionDef, Call, Return, NoOp, Array
 from littlepython.feature import Features
 from littlepython.tokenizer import TokenTypes
 
@@ -166,19 +166,29 @@ class Parser(object):
 
         return FunctionSig(params)
 
-    def arg_list(self):
+    def arg_list(self, ending_char=TokenTypes.RPAREN):
         """
         arglist    : expression, arglist
         arglist    : expression
         arglist    :
         """
         args = []
-        while not self.cur_token.type == TokenTypes.RPAREN:
+        while not self.cur_token.type == ending_char:
             args.append(self.expression())
             if self.cur_token.type == TokenTypes.COMMA:
                 self.eat(TokenTypes.COMMA)
 
         return args
+
+    def array_const(self):
+        """
+        Feature Type Array adds:
+        array      : [ arglist ]
+        """
+        self.eat(TokenTypes.LBRACKET)
+        node = Array(self.arg_list(TokenTypes.RBRACKET))
+        self.eat(TokenTypes.RBRACKET)
+        return node
 
     def block(self):
         """
@@ -267,13 +277,14 @@ class Parser(object):
         elif token.type == TokenTypes.INT:
             self.eat(TokenTypes.INT)
             return Int(token)
+        elif token.type == TokenTypes.LBRACKET:
+            return self.array_const()
         elif token.type == TokenTypes.LPAREN:
             self.eat(TokenTypes.LPAREN)
             node = self.expression()
             self.eat(TokenTypes.RPAREN)
             return node
         elif token.type == TokenTypes.VAR:
-            # self.eat(TokenTypes.VAR)
             return self.variable()
         else:
             self.error("Excepted a factor type got {}".format(self.cur_token.type))
