@@ -7,8 +7,10 @@ from copy import copy
 
 from collections import defaultdict
 
+from multiprocessing import Lock
+
 from littlepython.ast import SetArrayItem, GetArrayItem, ForLoop, FunctionDef, Call, Function
-from littlepython.error import ExecutionCountExceededException, AlreadyRunningException, DivisionByZeroException
+from littlepython.error import ExecutionCountExceededException, DivisionByZeroException
 from littlepython.parser import Assign, Block, ControlBlock, If, BinaryOp, UnaryOp
 from littlepython.feature import Features
 
@@ -147,7 +149,7 @@ class LPProg(object):
     def __init__(self, ast, features):
         self.ast = ast
         self.features = features
-        self.running = False
+        self.running_lock = Lock()
         self.count_remaining = -1
         self.random = random
 
@@ -251,26 +253,23 @@ class LPProg(object):
         return handler(node, sym_tbl)
 
     def run(self, static_vars=None, max_op_count=-1, random=None):
-        if self.running:
-            raise AlreadyRunningException("This program can only be run on one thread. And this one is already running.")
-        self.running = True
-        self.count_remaining = max_op_count
-        if random is not None:
-            self.random = random
-        state = {}
-        if static_vars is not None:
-            for key, var in static_vars.items():
-                state[key] = convert_python_type_to_lp_type(var)
-        sym_tbl = ScopedSymbolTable(state)
-        self.handle(self.ast, sym_tbl)
-        end_state = {}
-        for key, var in sym_tbl.dump_cur_state().items():
-            # if isinstance(var, defaultdict):
-            #     end_state[key] = defaultdict_to_list(var)
-            if isinstance(var, Function):
-                continue
-            else:
-                end_state[key] = convert_lp_type_to_python_type(var)
+        with self.running_lock:
+            self.count_remaining = max_op_count
+            if random is not None:
+                self.random = random
+            state = {}
+            if static_vars is not None:
+                for key, var in static_vars.items():
+                    state[key] = convert_python_type_to_lp_type(var)
+            sym_tbl = ScopedSymbolTable(state)
+            self.handle(self.ast, sym_tbl)
+            end_state = {}
+            for key, var in sym_tbl.dump_cur_state().items():
+                # if isinstance(var, defaultdict):
+                #     end_state[key] = defaultdict_to_list(var)
+                if isinstance(var, Function):
+                    continue
+                else:
+                    end_state[key] = convert_lp_type_to_python_type(var)
 
-        self.running = False
-        return end_state
+            return end_state
