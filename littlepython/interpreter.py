@@ -27,26 +27,20 @@ class Array(defaultdict):
                     self[i] = arg
 
 
-def defaultdict_to_list(d):
-    valid_keys = [x for x in d.keys() if d[x] != 0]
-    length = max(valid_keys)+1
-    l = [0]*length
-    for k, v in d.items():
-        if v != 0:
-            l[k] = v
-    return l
-
-
 def convert_python_type_to_lp_type(var):
-    if isinstance(var, list):
+    if isinstance(var, int):
+        return var
+    if isinstance(var, list) or isinstance(var, tuple):
         new_list = defaultdict(int)
         for i, v in enumerate(var):
             new_list[i] = convert_python_type_to_lp_type(v)
         return new_list
-    return copy(var)
+    raise TypeError("Little Python doesn't support this type as input.")
 
 
 def convert_lp_type_to_python_type(var):
+    if isinstance(var, int):
+        return var
     if isinstance(var, defaultdict):
         valid_keys = [x for x in var.keys() if var[x] != 0]
         if not valid_keys:
@@ -285,8 +279,6 @@ class LPProg(object):
             self.handle(self.ast, sym_tbl)
             end_state = {}
             for key, var in sym_tbl.dump_cur_state().items():
-                # if isinstance(var, defaultdict):
-                #     end_state[key] = defaultdict_to_list(var)
                 if isinstance(var, Function):
                     continue
                 else:
