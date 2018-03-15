@@ -46,12 +46,12 @@ def test_binary_integer_ops(a, b, op_str, op_lambda):
 
 
 @pytest.mark.parametrize("a", [
-    (0,),
-    (1,),
+    0,
+    1,
 ])
 @pytest.mark.parametrize("b", [
-    (0,),
-    (1,),
+    0,
+    1,
 ])
 @pytest.mark.parametrize("op_str, op_lambda", [
     ("and", lambda a, b: a and b),
@@ -66,8 +66,8 @@ def test_binary_logical_ops(a, b, op_str, op_lambda):
 
 
 @pytest.mark.parametrize("a", [
-    (0,),
-    (1,),
+    0,
+    1,
 ])
 def test_op_not(a):
     end = run("b = not a", a=a)
@@ -75,8 +75,8 @@ def test_op_not(a):
 
 
 @pytest.mark.parametrize("a", [
-    (0,),
-    (1,),
+    0,
+    1,
 ])
 @pytest.mark.parametrize("b", [
     0,
