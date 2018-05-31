@@ -17,3 +17,4 @@
 .eggs/*
 
 docs/build/*
+.pytest_cache/*
