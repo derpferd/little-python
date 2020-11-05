@@ -35,7 +35,7 @@ def convert_python_type_to_lp_type(var):
         for i, v in enumerate(var):
             new_list[i] = convert_python_type_to_lp_type(v)
         return new_list
-    raise TypeError("Little Python doesn't support this type as input.")
+    raise TypeError(f"Little Python doesn't support this type ({type(var)}) as input.")
 
 
 def convert_lp_type_to_python_type(var):
