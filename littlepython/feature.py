@@ -1,7 +1,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from collections import Iterable
+from collections.abc import Iterable
 
 
 class Feature(object):
